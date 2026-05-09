@@ -1,4 +1,4 @@
-# obc
+# obe
 
 [![Build and Test Status](https://github.com/raulcostajunior/obc/actions/workflows/cmake.yml/badge.svg)](https://github.com/raulcostajunior/obc/actions/workflows/cmake.yml)
 
@@ -22,7 +22,7 @@ is used.
 
 #### Oberon+
 
-**obc** is only my first take on writing a compiler and most probably nothing too useful will come out of it.
+**obe** is only my first take on writing a compiler and most probably nothing too useful will come out of it.
 
 To get really serious about Oberon and its future, take a GOOD look at [Oberon+](https://oberon-lang.github.io/).
 
@@ -40,4 +40,4 @@ from <cite> [ArsTechnica](https://arstechnica.com/science/2023/05/as-many-as-fou
 
 ## Build
 
-To build **obc**, [CMake](https://cmake.org) version 3.24 or later is required.
+To build **obe**, [CMake](https://cmake.org) version 3.24 or later is required.
