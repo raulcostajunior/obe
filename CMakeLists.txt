@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
-project(obc
+project(obe
         VERSION 1.0.0
         DESCRIPTION "An Oberon-07 to LLVM-IR compiler"
         LANGUAGES CXX)
@@ -25,8 +25,8 @@ FetchContent_MakeAvailable(CLI11)
 FetchContent_MakeAvailable(GoogleTest)
 
 # The compiler library to be linked to the CLI and the unit tests
-add_library(obc_lib STATIC)
-target_sources(obc_lib PUBLIC
+add_library(obe_lib STATIC)
+target_sources(obe_lib PUBLIC
         src/Token.cpp src/Scanner.cpp src/ErrorInfo.cpp src/TokenUtils.cpp
         src/Parser.cpp
         src/Compiler.cpp
@@ -43,10 +43,10 @@ target_sources(obc_lib PUBLIC
         ${PROJECT_SOURCE_DIR}/src/Version.hpp)
 
 # The compiler CLI
-add_executable(obc
+add_executable(obe
         src/main.cpp)
-target_link_libraries(obc PRIVATE obc_lib)
-target_include_directories(obc
+target_link_libraries(obe PRIVATE obe_lib)
+target_include_directories(obe
         PRIVATE ${CLI11_SOURCE_DIR}/include)
 
 # Unit tests
@@ -54,7 +54,7 @@ include(GoogleTest)
 enable_testing()
 
 add_executable(scanner_test_suite src/test/ScannerTestSuite.cpp)
-target_link_libraries(scanner_test_suite PRIVATE GTest::gtest GTest::gtest_main PRIVATE obc_lib)
+target_link_libraries(scanner_test_suite PRIVATE GTest::gtest GTest::gtest_main PRIVATE obe_lib)
 
 # To avoid a warning introduced by the new Apple linker shipped with XCode15.
 # Details at https://gitlab.kitware.com/cmake/cmake/-/issues/25297
