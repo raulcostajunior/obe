@@ -40,5 +40,4 @@ from <cite> [ArsTechnica](https://arstechnica.com/science/2023/05/as-many-as-fou
 
 ## Build
 
-To build **obc**, [CMake](https://cmake.org) version 3.20 or later is required.
-
+To build **obc**, [CMake](https://cmake.org) version 3.24 or later is required.
