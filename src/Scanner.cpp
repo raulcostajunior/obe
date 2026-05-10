@@ -128,7 +128,7 @@ namespace obc {
     }
 
     char Scanner::nextChr(ScanContext& ctx) {
-        const char chr = ctx.srcInput[ctx.lexPos];
+        const char chr = ctx.srcInput.at(ctx.lexPos);
         ctx.lexPos++;
         return chr;
     }
@@ -137,11 +137,11 @@ namespace obc {
         if (allScanned(ctx)) {
             return '\0';
         }
-        return ctx.srcInput[ctx.lexPos];
+        return ctx.srcInput.at(ctx.lexPos);
     }
 
     bool Scanner::nextChrMatch(ScanContext& ctx, const char expChr) {
-        if (allScanned(ctx) || ctx.srcInput[ctx.lexPos] != expChr) {
+        if (allScanned(ctx) || ctx.srcInput.at(ctx.lexPos) != expChr) {
             return false;
         }
         ctx.lexPos++;
