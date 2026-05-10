@@ -25,6 +25,11 @@ int main(int argc, char **argv) {
                  "Must keywords be all lowercase? (in the Oberon-07 spec, keywords are all "
                  "uppercase)");
 
+    uint8_t spacesPerTab{0};
+    app.add_flag("--spaces-per-tab", spacesPerTab,
+                 "Number of spaces per tab. (if not set, column information is ignored from "
+                 "the column a tab is found in a line, until the end of that line).");
+
     std::string srcFile;
     CLI::Option *srcFileOption =
           app.add_option("src_file", srcFile, "Oberon-07 source file to be compiled");

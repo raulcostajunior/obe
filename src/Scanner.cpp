@@ -26,24 +26,25 @@ namespace obc {
         std::string_view srcInput;
         // Use lowercase keyword?
         bool lowerCaseKeywords;
+        // Number of spaces per tab - zero means it is not known and lines with tabs cannot
+        // have the currColumn information updated since the first tab is found on the line.
+        uint8_t spacesPerTab;
         // Should currColumn be ignored? (Look in currColumn description for more details)
-        bool ignoreCurrColumn;
+        bool ignoreCurrColumn{false};
         // Index, in the src input, of the character being scanned.
         unsigned long lexPos{0};
         // Number of the line from the src input currently being scanned.
         int currLine{1};
         // Number of the column (of the current line) from the src input currently
-        // being scanned. Column information should be ignored if there's at least one '\t' in
-        // the source file.
+        // being scanned. Column information should be ignored if at least one '\t' has been
+        // found in the current line and the number of spaces per tab is not set.
         int currColumn{1};
         // The tokens (and errors) found by the ongoing scan operation.
         ScanResults results;
 
         ScanContext(const std::string& srcInput, const bool lowerKey,
-                    const bool ignoreCurrColumn)
-            : srcInput{srcInput},
-              lowerCaseKeywords{lowerKey},
-              ignoreCurrColumn{ignoreCurrColumn} {}
+                    const uint8_t spacesPerTab)
+            : srcInput{srcInput}, lowerCaseKeywords{lowerKey}, spacesPerTab{spacesPerTab} {}
 
         int getCurrColumn() const {
             if (ignoreCurrColumn) {
@@ -53,7 +54,8 @@ namespace obc {
         }
     };
 
-    ScanResults Scanner::scanSrcFile(const std::string& srcFilePath, bool lowerCaseKeywords) {
+    ScanResults Scanner::scanSrcFile(const std::string& srcFilePath,
+                                     const bool lowerCaseKeywords, const uint8_t spacesPerTab) {
         std::string src;
         { // Scope for the srcFile ifstream - allows its destruction before lexing
             // work actually takes place.
@@ -102,16 +104,13 @@ namespace obc {
             }
         }
         // Scans the source file from its in-memory storage.
-        return scan(src, lowerCaseKeywords);
+        return scan(src, lowerCaseKeywords, spacesPerTab);
     }
 
 
-    ScanResults Scanner::scan(const std::string& src, const bool lowerCaseKeywords) {
-        // Current column information should be ignored when the source file has at least one
-        // tab: The information of how many columns correspond to a '\t' is not in the source
-        // file and cannot be easily inferred.
-        const bool srcHasTab = src.find('\t') != std::string::npos;
-        ScanContext ctx(src, lowerCaseKeywords, srcHasTab);
+    ScanResults Scanner::scan(const std::string& src, const bool lowerCaseKeywords,
+                              const uint8_t spacesPerTab) {
+        ScanContext ctx(src, lowerCaseKeywords, spacesPerTab);
 
         while (!allScanned(ctx)) {
             scanNextToken(ctx);
@@ -202,14 +201,25 @@ namespace obc {
             // not ignored when inside strings.
             case ' ':
             case '\r':
-            case '\t':
                 ctx.currColumn++;
                 break;
-
+            case '\t':
+                if (ctx.spacesPerTab > 0) {
+                    ctx.currColumn += ctx.spacesPerTab;
+                } else {
+                    // Since spacesPerTab is not set, column number information will be ignored
+                    // until the end of the current line.
+                    ctx.ignoreCurrColumn = true;
+                }
+                break;
             // Handling of new lines (outside comments; new lines in the middle of comments are
             // handled by the comment handler)
             case '\n':
                 ctx.currLine++;
+                // Column number information taken into account again - at least until a '\t' is
+                // found in the line whose scan is starting, if the number of spacesPerTab is
+                // not set.
+                ctx.ignoreCurrColumn = false;
                 ctx.currColumn = 1;
                 break;
 
@@ -237,16 +247,18 @@ namespace obc {
                 break;
 
             default:
-                ctx.currColumn++;
                 if (std::isalpha(chr) != 0) {
+                    ctx.currColumn++;
                     scanIdentifier(ctx, chr);
                 } else if (std::isdigit(chr) != 0) {
+                    ctx.currColumn++;
                     scanNumberOrSingleCharString(ctx, chr);
                 } else {
                     ctx.results.errors.emplace_back(ErrorInfo{
                           .line = ctx.currLine,
                           .column = ctx.getCurrColumn(),
                           .msg = std::string{"Unexpected character, '"} + chr + "' found."});
+                    ctx.currColumn++;
                 }
         }
     }

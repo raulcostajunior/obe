@@ -22,6 +22,7 @@ namespace obc {
          *
          * @param srcFilePath the path of the source file to be scanned.
          * @param lowerCaseKeywords use lowercase keywords?
+         * @param spacesPerTab to how many spaces does a tab correspond? (zero means unknown)
          *
          * @return list of tokens (and the lexical errors) in the file.
          *
@@ -29,20 +30,23 @@ namespace obc {
          * opinions against all upper case keywords.
          */
         static ScanResults scanSrcFile(const std::string& srcFilePath,
-                                       bool lowerCaseKeywords = false);
+                                       bool lowerCaseKeywords = false,
+                                       uint8_t spacesPerTab = 0);
 
         /**
          * @brief Scans a string with the contents of a source file.
          *
          * @param src the contents of a source file.
          * @param lowerCaseKeywords use lowercase keywords?
+         * @param spacesPerTab how many spaces correspond to each tab? (zero means unknown)
          *
          * @return list of tokens (and the lexical errors) in the contents.
          *
          * @note Lower case keywords mode has been introduced because of the high number of
          * opinions against all upper case keywords.
          */
-        static ScanResults scan(const std::string& src, bool lowerCaseKeywords = false);
+        static ScanResults scan(const std::string& src, bool lowerCaseKeywords = false,
+                                uint8_t spacesPerTab = 0);
 
        private:
         /**
@@ -174,7 +178,7 @@ namespace obc {
          * two-character token.
          * @param ctx the context of the ongoing scan operation.
          */
-        static void handleTwoCharTokens(char firstChr, enum TokenType expectTokenType,
+        static void handleTwoCharTokens(char firstChr, TokenType expectTokenType,
                                         char expectSecondChr, ScanContext& ctx);
     };
 } // namespace obc

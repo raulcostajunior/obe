@@ -141,20 +141,20 @@ TEST(ScannerTests, TestModuleWithInvalidSymbol) {
     // A source file with an invalid terminal symbol must trigger a lexical error.
     // The error must not stop the scanner, which must continue finding tokens
     // until the end of the module.
-    const std::string invalidSymbolSrc{R"(
+    const std::string invalidSymbolSrcPrefix{R"(
 MODULE WithInvalidSymbol;
 
 (* ? is not a valid terminal in the language; it should be accepted in a 
-comment, but trigger an error when outside a comment *)
+comment, but trigger an error when outside a comment; tabs used for indentation *)
 
 BEGIN
-    VAR i: INTEGER?;
-    WriteInt(i);
-END.
 )"};
-
-    auto [tokens, errors] = Scanner::scan(invalidSymbolSrc);
-    ASSERT_EQ(tokens.size(), 17);
+    // Note: no raw strings to specify the tabs as the source editor can be configured to
+    // convert tabs to spaces on save. Use explicit "\t" instead.
+    const std::string invalidSymbolSrc{invalidSymbolSrcPrefix +
+                                       "\tVAR i: INTEGER?;\n\tWriteInt(i)\nEND.\n"};
+    auto [tokens, errors] = Scanner::scan(invalidSymbolSrc, false, 4);
+    ASSERT_EQ(tokens.size(), 16);
     EXPECT_EQ(tokens.at(0).type, TokenType::MODULE);
     EXPECT_EQ(tokens.at(1).type, TokenType::IDENT);
     EXPECT_EQ(tokens.at(1).lexeme, "WithInvalidSymbol");
@@ -163,15 +163,26 @@ END.
     EXPECT_EQ(tokens.at(7).type, TokenType::IDENT);
     EXPECT_EQ(tokens.at(7).lexeme, "INTEGER");
     EXPECT_EQ(tokens.at(8).type, TokenType::SEMICOLON);
-    EXPECT_EQ(tokens.at(15).type, TokenType::DOT);
+    EXPECT_EQ(tokens.at(14).type, TokenType::DOT);
     EXPECT_EQ(tokens.at(tokens.size() - 1).type, TokenType::EOM);
 
     ASSERT_EQ(errors.size(), 1);
     // The R-String for the source starts with a new line, so the MODULE line
     // is already line 2 in the source - that's the reason for line with the
-    // invalid symbol being line 8.
+    // invalid symbol being line 8, not 7.
     EXPECT_EQ(errors.at(0).line, 8);
+    // Since the number of spaces per tab has been specified, the column position for the
+    // error must be defined
+    EXPECT_EQ(errors.at(0).column, 19);
     EXPECT_EQ(errors.at(0).msg, std::string{"Unexpected character, '?' found."});
+
+    auto [tokensUnkSpaces, errorsUnkSpaces] = Scanner::scan(invalidSymbolSrc);
+    ASSERT_EQ(tokensUnkSpaces.size(), 16);
+    ASSERT_EQ(errorsUnkSpaces.size(), 1);
+    EXPECT_EQ(errorsUnkSpaces.at(0).line, 8);
+    // With the number of spaces per tab unspecified (its default value of 0), the column
+    // position for the error must be undefined (numerical value -1).
+    EXPECT_EQ(errorsUnkSpaces.at(0).column, -1);
 }
 
 TEST(ScannerTests, TestModuleWithStringLiteral) {
