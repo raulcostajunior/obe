@@ -54,8 +54,8 @@ namespace obc {
         }
     };
 
-    ScanResults Scanner::scanSrcFile(const std::string& srcFilePath,
-                                     const bool lowerCaseKeywords, const uint8_t spacesPerTab) {
+    ScanResults Scanner::scanSrcFile(const std::string& srcFilePath, bool lowerCaseKeywords,
+                                     uint8_t spacesPerTab) {
         std::string src;
         { // Scope for the srcFile ifstream - allows its destruction before lexing
             // work actually takes place.
@@ -108,8 +108,8 @@ namespace obc {
     }
 
 
-    ScanResults Scanner::scan(const std::string& src, const bool lowerCaseKeywords,
-                              const uint8_t spacesPerTab) {
+    ScanResults Scanner::scan(const std::string& src, bool lowerCaseKeywords,
+                              uint8_t spacesPerTab) {
         ScanContext ctx(src, lowerCaseKeywords, spacesPerTab);
 
         while (!allScanned(ctx)) {
