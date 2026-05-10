@@ -1,6 +1,7 @@
 #ifndef SCANNER_HPP
 #define SCANNER_HPP
 
+#include <cstdint>
 #include <vector>
 
 #include "ErrorInfo.hpp"

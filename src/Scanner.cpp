@@ -1,7 +1,6 @@
 #include "Scanner.hpp"
 
 #include <array>
-#include <cstdint>
 #include <cstring>
 #include <fstream>
 #include <string_view>
