@@ -1,9 +1,7 @@
 #ifndef SCANNER_HPP
 #define SCANNER_HPP
 
-#if defined(__MSVCRT__) || defined(_MSC_VER)
 #include <cstdint>
-#endif
 #include <vector>
 
 #include "ErrorInfo.hpp"
