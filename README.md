@@ -15,18 +15,18 @@ is used.
 
 > Oberon-07 is one of the amazing programming languages created
 > by [Prof. Niklaus Wirth](https://people.inf.ethz.ch/wirth/), who unfortunately, passed away on
-> January 1st. 2024. A summary of the projects of Prof. Niklaus Wirth between 1962 and 1999 can be
+> January 1st. 2024. The projects of Prof. Niklaus Wirth between 1962 and 1999 can be
 > found [here](https://people.inf.ethz.ch/wirth/projects.html).
 
 ## On Oberon
 
 #### Oberon+
 
-**obe** is only my first take on writing a compiler and most probably nothing too useful will come out of it.
+**obe** is only my first take on writing a compiler, and most probably nothing too useful will come out of it.
 
 To get really serious about Oberon and its future, take a GOOD look at [Oberon+](https://oberon-lang.github.io/).
 
-#### Oberon - the Uranus' moon, not the language - in the news:
+#### Oberon (the Uranus' moon, not the language) in the news:
 
 > "This has led NASA scientists to conclude that four of Uranus’ largest moons—Ariel, Umbriel, Titania, and **Oberon**
 > —probably contain water oceans below their icy crusts. These oceans are likely dozens of kilometers deep and probably
