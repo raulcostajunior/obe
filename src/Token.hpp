@@ -38,6 +38,10 @@ namespace obc {
         // EOM (End-of-Module - sentinel value to ease the parser's life)
         EOM,
 
+        // Comment - comments are required by documentation generation tools; don't
+        // simple "consume" them
+        COMMENT,
+
         // clang-format on
     };
 

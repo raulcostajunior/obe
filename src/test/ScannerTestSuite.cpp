@@ -56,7 +56,7 @@ END LowerCaseModule.
 
     // A lexically valid file with lowerCase keywords should be successfully parsed with all
     // the keywords identified with the scanner in lowerCaseKeywords mode.
-    auto res = Scanner::scan(lowerCaseSrc, true);
+    auto res = Scanner::scan(std::string{lowerCaseSrc}, true);
     ASSERT_EQ(res.errors.size(), 0);
     ASSERT_EQ(res.tokens.size(), expectTokens);
     EXPECT_EQ(res.tokens.at(0).type, TokenType::MODULE);
@@ -70,7 +70,7 @@ END LowerCaseModule.
     // A lexically valid file with lowerCaseKeywords should be successfully parsed with none
     // of the keywords identified when the scanner is in the default uppercase-keywords mode.
     // All keywords should be identified as token identifiers.
-    res = Scanner::scan(lowerCaseSrc);
+    res = Scanner::scan(std::string{lowerCaseSrc});
     ASSERT_EQ(res.errors.size(), 0);
     ASSERT_EQ(res.tokens.size(), expectTokens);
     EXPECT_EQ(res.tokens.at(0).type, TokenType::IDENT);
@@ -85,7 +85,7 @@ END LowerCaseModule.
 
     // A lexically valid file with uppercase keywords should be successfully parsed with all
     // the keywords identified with the scanner in the default uppercase-keywords mode.
-    res = Scanner::scan(upperCaseSrc);
+    res = Scanner::scan(std::string{upperCaseSrc});
     ASSERT_EQ(res.errors.size(), 0);
     ASSERT_EQ(res.tokens.size(), expectTokens);
     EXPECT_EQ(res.tokens.at(0).type, TokenType::MODULE);
@@ -99,7 +99,7 @@ END LowerCaseModule.
     // A lexically valid file with uppercase keywords should be successfully parsed with none
     // of the keywords identified when the scanner is in lowercase-keywords mode.
     // All keywords should be identified as token identifiers.
-    res = Scanner::scan(upperCaseSrc, true);
+    res = Scanner::scan(std::string{upperCaseSrc}, true);
     ASSERT_EQ(res.errors.size(), 0);
     ASSERT_EQ(res.tokens.size(), expectTokens);
     EXPECT_EQ(res.tokens.at(0).type, TokenType::IDENT);
@@ -154,16 +154,17 @@ BEGIN
     const std::string invalidSymbolSrc{invalidSymbolSrcPrefix +
                                        "\tVAR i: INTEGER?;\n\tWriteInt(i)\nEND.\n"};
     auto [tokens, errors] = Scanner::scan(invalidSymbolSrc, false, 4);
-    ASSERT_EQ(tokens.size(), 16);
+    ASSERT_EQ(tokens.size(), 17);
     EXPECT_EQ(tokens.at(0).type, TokenType::MODULE);
     EXPECT_EQ(tokens.at(1).type, TokenType::IDENT);
     EXPECT_EQ(tokens.at(1).lexeme, "WithInvalidSymbol");
-    // Tokens 7 and 8 are the ones around the invalid symbol in the source.
+    EXPECT_EQ(tokens.at(3).type, TokenType::COMMENT);
+    // Tokens 8 and 9 are the ones around the invalid symbol in the source.
     // We verify if they have been properly scanned.
-    EXPECT_EQ(tokens.at(7).type, TokenType::IDENT);
-    EXPECT_EQ(tokens.at(7).lexeme, "INTEGER");
-    EXPECT_EQ(tokens.at(8).type, TokenType::SEMICOLON);
-    EXPECT_EQ(tokens.at(14).type, TokenType::DOT);
+    EXPECT_EQ(tokens.at(8).type, TokenType::IDENT);
+    EXPECT_EQ(tokens.at(8).lexeme, "INTEGER");
+    EXPECT_EQ(tokens.at(9).type, TokenType::SEMICOLON);
+    EXPECT_EQ(tokens.at(15).type, TokenType::DOT);
     EXPECT_EQ(tokens.at(tokens.size() - 1).type, TokenType::EOM);
 
     ASSERT_EQ(errors.size(), 1);
@@ -177,7 +178,7 @@ BEGIN
     EXPECT_EQ(errors.at(0).msg, std::string{"Unexpected character, '?' found."});
 
     auto [tokensUnkSpaces, errorsUnkSpaces] = Scanner::scan(invalidSymbolSrc);
-    ASSERT_EQ(tokensUnkSpaces.size(), 16);
+    ASSERT_EQ(tokensUnkSpaces.size(), 17);
     ASSERT_EQ(errorsUnkSpaces.size(), 1);
     EXPECT_EQ(errorsUnkSpaces.at(0).line, 8);
     // With the number of spaces per tab unspecified (its default value of 0), the column
@@ -211,7 +212,7 @@ TEST(ScannerTests, TestModuleWithNumericLiterals) {
                                           .append("NumLiterals.Mod")
                                           .string()};
     auto [tokens, errors] = Scanner::scanSrcFile(src_file_path);
-    ASSERT_EQ(tokens.size(), 73);
+    ASSERT_EQ(tokens.size(), 74);
     // InvalidRealNoIntPart = .2E+4 must be scanned as a dot, followed by an invalid hex int
     // (2E), a plus, and a 4 integer.
     EXPECT_EQ(tokens.at(4).type, TokenType::IDENT);
@@ -227,23 +228,24 @@ TEST(ScannerTests, TestModuleWithNumericLiterals) {
     EXPECT_EQ(tokens.at(16).type, TokenType::EQUAL);
     EXPECT_EQ(tokens.at(17).type, TokenType::REAL);
     EXPECT_EQ(tokens.at(17).lexeme, "23.E+2");
+    EXPECT_EQ(tokens.at(19).type, TokenType::COMMENT);
     // ValidRealNoDecimalNScale must be scanned as a REAL with the appropriate lexeme.
-    EXPECT_EQ(tokens.at(20).type, TokenType::IDENT);
-    EXPECT_EQ(tokens.at(20).lexeme, "ValidRealNoDecimalNoScale");
-    EXPECT_EQ(tokens.at(21).type, TokenType::EQUAL);
-    EXPECT_EQ(tokens.at(22).type, TokenType::REAL);
-    EXPECT_EQ(tokens.at(22).lexeme, "23.");
+    EXPECT_EQ(tokens.at(21).type, TokenType::IDENT);
+    EXPECT_EQ(tokens.at(21).lexeme, "ValidRealNoDecimalNoScale");
+    EXPECT_EQ(tokens.at(22).type, TokenType::EQUAL);
+    EXPECT_EQ(tokens.at(23).type, TokenType::REAL);
+    EXPECT_EQ(tokens.at(23).lexeme, "23.");
     // ValidHexInt must be scanned as an INTEGER with the appropriate lexeme.
-    EXPECT_EQ(tokens.at(25).type, TokenType::IDENT);
-    EXPECT_EQ(tokens.at(25).lexeme, "ValidHexInt");
-    EXPECT_EQ(tokens.at(26).type, TokenType::EQUAL);
-    EXPECT_EQ(tokens.at(27).type, TokenType::INTEGER);
-    EXPECT_EQ(tokens.at(27).lexeme, "87AH");
-    // 2AX must be recognized as a valid one char string. 2A is 42 in base 10 and is the code
+    EXPECT_EQ(tokens.at(26).type, TokenType::IDENT);
+    EXPECT_EQ(tokens.at(26).lexeme, "ValidHexInt");
+    EXPECT_EQ(tokens.at(27).type, TokenType::EQUAL);
+    EXPECT_EQ(tokens.at(28).type, TokenType::INTEGER);
+    EXPECT_EQ(tokens.at(28).lexeme, "87AH");
+    // 2AX must be recognized as a valid one-char string. 2A is 42 in base 10 and is the code
     // for the '*'.
-    EXPECT_EQ(tokens.at(36).type, TokenType::STRING);
-    EXPECT_EQ(tokens.at(36).lexeme, "*");
-    EXPECT_EQ(tokens.at(36).line, 9);
+    EXPECT_EQ(tokens.at(37).type, TokenType::STRING);
+    EXPECT_EQ(tokens.at(37).lexeme, "*");
+    EXPECT_EQ(tokens.at(37).line, 9);
 
     EXPECT_EQ(tokens.at(tokens.size() - 1).type, TokenType::EOM);
 

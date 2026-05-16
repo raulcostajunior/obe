@@ -31,7 +31,8 @@ namespace obc {
         // Number of spaces per tab - zero means it is not known and lines with tabs cannot
         // have the currColumn information updated after the first line tab is found.
         uint8_t spacesPerTab;
-        // Should currColumn be ignored? (currColumn parameter description below for more details)
+        // Should currColumn be ignored? (currColumn parameter description below for more
+        // details)
         bool ignoreCurrColumn{false};
         // Index, in the src input, of the character being scanned.
         unsigned long lexPos{0};
@@ -92,7 +93,7 @@ namespace obc {
                 //       character and set both eofbit and failbit.
                 ScanResults res;
                 std::array<char, ERR_MSG_BUFF_SIZE> errBuf{};
-                
+
 #if defined(__MSVCRT__) || defined(_MSC_VER)
                 // On Windows, using the Microsoft supplied runtime, the safe
                 // version of strerror is not strerror_r, but strerror_s.
@@ -201,7 +202,7 @@ namespace obc {
                 break;
 
             // Handling of whitespace characters (except newlines): simply consumed. Blanks are
-            // not ignored when inside strings.
+            // not ignored when inside strings or comments.
             case ' ':
             case '\r':
                 ctx.currColumn++;
@@ -233,7 +234,7 @@ namespace obc {
                 if (nextChrMatch(ctx, '*')) {
                     // Found start of comment - "consume" it.
                     ctx.currColumn++;
-                    consumeComment(ctx);
+                    scanComment(ctx);
                     break;
                 } // Found a single-character open parenthesis token.
                 ctx.results.tokens.emplace_back(Token{.type = Token::typeFromChar(chr),
@@ -406,28 +407,45 @@ namespace obc {
               Token{.type = tkType, .lexeme = identLex, .line = ctx.currLine});
     }
 
-    void Scanner::consumeComment(ScanContext& ctx) {
+    void Scanner::scanComment(ScanContext& ctx) {
         bool endOfCommentFound = false;
-        while (!allScanned(ctx)) {
-            // As comments can be "surrounded" by real code (in Oberon-07, comments are not
-            // ended by line breaks), the line and column information must be updated.
-            if (nextChrNoAdvance(ctx) == '\n') {
-                ctx.currLine++;
-                ctx.currColumn = 1;
-            } else {
-                ctx.currColumn++;
-            }
-            if (nextChrNoAdvance(ctx) == '*') {
-                // There's a chance that the end of comment has been reached;
-                // Advances the scan and checks if the next character is ")"
-                ctx.lexPos++;
-                if (nextChrNoAdvance(ctx) == ')') {
-                    // The end of the comment has indeed been reached.
+        std::string strLex{};
+        while (!allScanned(ctx) && !endOfCommentFound) {
+            switch (const char nextChr = nextChrNoAdvance(ctx)) {
+                case '\n':
+                    strLex.push_back(nextChr);
+                    ctx.currLine++;
+                    ctx.currColumn = 1;
+                    ctx.ignoreCurrColumn = false;
+                    break;
+                case '\t':
+                    if (ctx.spacesPerTab > 0) {
+                        ctx.currColumn += ctx.spacesPerTab;
+                        for (uint8_t i = 0; i < ctx.spacesPerTab; i++) {
+                            strLex.push_back(' ');
+                        }
+                    } else {
+                        ctx.ignoreCurrColumn = true;
+                        strLex.push_back(' ');
+                        ctx.currColumn++;
+                    }
+                    break;
+                case '*':
+                    // There's a chance that the end of comment has been reached;
+                    // Advances the scan and checks if the next character is ")"
                     ctx.lexPos++;
+                    if (nextChrNoAdvance(ctx) == ')') {
+                        // The end of the comment has indeed been reached.
+                        ctx.currColumn++;
+                        ctx.results.tokens.emplace_back(Token{.type = TokenType::COMMENT,
+                                                              .lexeme = strLex,
+                                                              .line = ctx.currLine});
+                        endOfCommentFound = true;
+                    }
+                    break;
+                default:
+                    strLex.push_back(nextChr);
                     ctx.currColumn++;
-                    endOfCommentFound = true;
-                    break; // Break-out of the comment-consuming loop
-                }
             }
             ctx.lexPos++;
         }
