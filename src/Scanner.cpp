@@ -1,7 +1,9 @@
 #include "Scanner.hpp"
 
 #include <array>
+#if defined(__MSVCRT__) || defined(_MSC_VER)
 #include <cstring>
+#endif
 #include <fstream>
 #include <string_view>
 
