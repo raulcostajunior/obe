@@ -29,7 +29,7 @@ namespace obc {
         // Use lowercase keyword?
         bool lowerCaseKeywords;
         // Number of spaces per tab - zero means it is not known and lines with tabs cannot
-        // have the currColumn information updated since the first tab is found on the line.
+        // have the currColumn information updated after the first line tab is found.
         uint8_t spacesPerTab;
         // Should currColumn be ignored? (currColumn parameter description below for more details)
         bool ignoreCurrColumn{false};
