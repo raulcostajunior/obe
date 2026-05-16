@@ -29,7 +29,7 @@ namespace obc {
         // Number of spaces per tab - zero means it is not known and lines with tabs cannot
         // have the currColumn information updated since the first tab is found on the line.
         uint8_t spacesPerTab;
-        // Should currColumn be ignored? (Look in currColumn description for more details)
+        // Should currColumn be ignored? (currColumn parameter description below for more details)
         bool ignoreCurrColumn{false};
         // Index, in the src input, of the character being scanned.
         unsigned long lexPos{0};
@@ -90,6 +90,7 @@ namespace obc {
                 //       character and set both eofbit and failbit.
                 ScanResults res;
                 std::array<char, ERR_MSG_BUFF_SIZE> errBuf{};
+                
 #if defined(__MSVCRT__) || defined(_MSC_VER)
                 // On Windows, using the Microsoft supplied runtime, the safe
                 // version of strerror is not strerror_r, but strerror_s.
@@ -161,12 +162,12 @@ namespace obc {
             case ']':
             case ')':
                 // A close parenthesis matched in this context won't be ont of the comments
-                // terminating characters. Such right parenthesis will be consumed by th comment
-                // consuming loop.
+                // terminating characters. Such a right parenthesis will be consumed by the
+                // comment-consuming loop.
             case ';':
             case '*':
                 // A star matched in this context won't be one of the comments terminating
-                // characters. Such stars will be consumed by the comment consuming loop.
+                // characters. Such stars will be consumed by the comment-consuming loop.
             case '~':
             case '{':
             case '}':
@@ -197,7 +198,7 @@ namespace obc {
                 handleTwoCharTokens(chr, TokenType::LABEL_RANGE, '.', ctx);
                 break;
 
-            // Handling of whitespace characters (except newline) - simply consumed. Blanks are
+            // Handling of whitespace characters (except newlines): simply consumed. Blanks are
             // not ignored when inside strings.
             case ' ':
             case '\r':
@@ -212,12 +213,12 @@ namespace obc {
                     ctx.ignoreCurrColumn = true;
                 }
                 break;
-            // Handling of new lines (outside comments; new lines in the middle of comments are
-            // handled by the comment handler)
+            // Handling of new lines outside comments - the comment handler takes care of new
+            // lines in the middle of comments
             case '\n':
                 ctx.currLine++;
                 // Column number information taken into account again - at least until a '\t' is
-                // found in the line whose scan is starting, if the number of spacesPerTab is
+                // found in the line whose scan is starting if the number of spacesPerTab is
                 // not set.
                 ctx.ignoreCurrColumn = false;
                 ctx.currColumn = 1;
@@ -304,7 +305,7 @@ namespace obc {
             // A decimal separator indicates that a REAL literal is being scanned.
             if (!allBase10Digits(lex)) {
                 // Oberon only allows integer numbers to be represented in hex. Real numbers
-                // must be always expressed in base 10.
+                // must always be expressed in base 10.
                 ctx.results.errors.emplace_back(
                       ErrorInfo{.line = ctx.currLine,
                                 .column = ctx.getCurrColumn(),
@@ -423,7 +424,7 @@ namespace obc {
                     ctx.lexPos++;
                     ctx.currColumn++;
                     endOfCommentFound = true;
-                    break; // Break-out of the comment consuming loop
+                    break; // Break-out of the comment-consuming loop
                 }
             }
             ctx.lexPos++;

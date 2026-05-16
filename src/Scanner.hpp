@@ -63,7 +63,7 @@ namespace obc {
          * @brief Returns whether the whole src input has been already scanned or not.
          *
          * @param ctx  the context of the ongoing scan operation.
-         * @return true all the characters from the src input have already been scanned.
+         * @return true if all the characters from the src input have already been scanned.
          * @return false there is at least one more character from the src input to be scanned.
          */
         static bool allScanned(const ScanContext& ctx);
@@ -77,19 +77,19 @@ namespace obc {
         static char nextChr(ScanContext& ctx);
 
         /**
-         * @brief Returns the next character in the source being scanned, but doesn't advance
+         * @brief Returns the next character in the source being scanned but doesn't advance
          * the scan.
          *
          * @param ctx the context of the ongoing scan operation.
-         * @return the next character in the source being scanned. If the end of the input has
-         * been reached, returns '\0'.
+         * @return The next character in the source being scanned. If the end of the input has
+         * been reached, it returns '\0'.
          */
         static char nextChrNoAdvance(const ScanContext& ctx);
 
         /**
          * @brief Returns whether the next character matches an expected character or not.
          *
-         * If the next character matches the expected character it is also "consumed", by
+         * If the next character matches the expected character, it is also "consumed" by
          * advancing the scan by one character.
          *
          * @param ctx the context of the ongoing scan operation.
@@ -112,10 +112,10 @@ namespace obc {
          * @brief Consumes the scanning input until an end of string character (the double
          * quotes) is found.
          *
-         * @attention this internal method must be called only when the scanner knows that is in
+         * @attention This internal method must be called only when the scanner knows that is in
          * a string literal - after the initial double quotes, but before the final double
-         * quotes. A string literal in Oberon must be on single line - an end of line before the
-         * string's closing double quotes triggers an error.
+         * quotes. A string literal in Oberon must be on a single line - an end of line before
+         * the string's closing double quotes triggers an error.
          *
          * @param ctx the context of the ongoing scan operation.
          *
@@ -125,7 +125,7 @@ namespace obc {
         /**
          * @brief Scans an identifier - sequence of letters and digits initiated by a letter.
          *
-         * An identifier can be a keyword of the language or can be a simple identifier (e.g. a
+         * An identifier can be a keyword of the language or can be a simple identifier (e.g., a
          * variable or constant name).
          *
          * @param ctx the context of the ongoing scan operation.
@@ -136,7 +136,7 @@ namespace obc {
         /**
          * @brief Scans a number - sequence of digits optionally in hexadecimal form - or a
          * single char string - sequence of digits or hexadecimal digits followed by an "X". A
-         * hexadecimal number literal must be followed by an "H" to be valid.
+         * hexadecimal number literal must end with an "H" to be valid.
          *
          * @param ctx the context of the ongoing scan operation.
          * @param firstDigit the first digit of the number.
@@ -168,14 +168,14 @@ namespace obc {
         static void scanRealScaleFactor(ScanContext& ctx, const std::string& realBasePart);
 
         /**
-         * Handles potential two-char tokens by looking ahead the next character in the source
+         * Handles potential two-char tokens by looking ahead for the next character in the code
          * and either consuming it as part of a two-char token if it matches the expected token
          * or returns immediately after registering the one-time token found.
          *
          * @param firstChr first character of the potentially two-character's token.
          * @param expectTokenType token type to be added if the second character matches what is
          * expected.
-         * @param expectSecondChr expected look-ahead character needed to compose a
+         * @param expectSecondChr the expected look-ahead character needed to compose a
          * two-character token.
          * @param ctx the context of the ongoing scan operation.
          */
