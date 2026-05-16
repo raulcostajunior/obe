@@ -1,5 +1,5 @@
 /**
- * obc - An Oberon-07 to LLVM-IR compiler.
+ * obe - An Oberon-07 to LLVM-IR compiler.
  *
  * The Oberon-07 programming language is described in
  * https://people.inf.ethz.ch/wirth/Oberon/Oberon07.Report.pdf
