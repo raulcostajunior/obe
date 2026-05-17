@@ -10,7 +10,7 @@ namespace obc {
     }
 
     bool allBase10Digits(const std::string& str) {
-        for (char chr : str) {
+        for (const char chr : str) {
             if (isdigit(chr) == 0) {
                 return false;
             }

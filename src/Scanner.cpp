@@ -119,8 +119,10 @@ namespace obc {
         }
 
         // An End-of-Module is always inserted to provide a clear indicator for the parser.
-        ctx.results.tokens.emplace_back(
-              Token{.type = TokenType::EOM, .lexeme = "", .line = ctx.currLine});
+        ctx.results.tokens.emplace_back(Token{.type = TokenType::EOM,
+                                              .lexeme = "",
+                                              .line = ctx.currLine,
+                                              .column = tokenInitialColumn(ctx, "")});
 
         return ctx.results;
     }
@@ -174,9 +176,12 @@ namespace obc {
             case '}':
             case '^':
                 try {
-                    ctx.results.tokens.emplace_back(Token{.type = Token::typeFromChar(chr),
-                                                          .lexeme = std::string{chr},
-                                                          .line = ctx.currLine});
+                    const std::string strLex{chr};
+                    ctx.results.tokens.emplace_back(
+                          Token{.type = Token::typeFromChar(chr),
+                                .lexeme = strLex,
+                                .line = ctx.currLine,
+                                .column = tokenInitialColumn(ctx, strLex)});
                 } catch (std::invalid_argument const& ex) {
                     ctx.results.errors.emplace_back(ErrorInfo{.line = ctx.currLine,
                                                               .column = ctx.getCurrColumn(),
@@ -228,19 +233,22 @@ namespace obc {
             // Handling of (potential) comments. If the "(" is followed by a "*" and indeed
             // starts a comment, the scanning process will be captured by the comment-consuming
             // loop.
-            case '(':
+            case '(': {
                 if (nextChrMatch(ctx, '*')) {
                     // Found start of comment - "consume" it.
                     ctx.currColumn++;
                     scanComment(ctx);
                     break;
                 } // Found a single-character open parenthesis token.
-                ctx.results.tokens.emplace_back(Token{.type = Token::typeFromChar(chr),
-                                                      .lexeme = std::string{chr},
-                                                      .line = ctx.currLine});
+                const std::string strLex{chr};
+                ctx.results.tokens.emplace_back(
+                      Token{.type = Token::typeFromChar(chr),
+                            .lexeme = strLex,
+                            .line = ctx.currLine,
+                            .column = tokenInitialColumn(ctx, strLex)});
                 ctx.currColumn++;
                 break;
-
+            }
             // Handling of string literals. String literals cannot contain internal double
             // quotes and cannot span across multiple lines.
             case '"':
@@ -286,10 +294,14 @@ namespace obc {
                 const int charCode = std::stoi(
                       lex, nullptr,
                       16); // NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
-                ctx.results.tokens.emplace_back(
-                      Token{.type = TokenType::STRING,
-                            .lexeme = std::string{static_cast<char>(charCode)},
-                            .line = ctx.currLine});
+                const std::string strLex{static_cast<char>(charCode)};
+                // Note: to get the right initial token column, the scanned string, lex,
+                // including the 'X', must be used, not the "computed" lexeme, strLex.
+                lex += nextChr;
+                ctx.results.tokens.emplace_back(Token{.type = TokenType::STRING,
+                                                      .lexeme = strLex,
+                                                      .line = ctx.currLine,
+                                                      .column = tokenInitialColumn(ctx, lex)});
             }
             // Consume the 'X' - it is not part of the string
             ctx.lexPos++;
@@ -300,8 +312,10 @@ namespace obc {
             lex.push_back(nextChr);
             ctx.lexPos++;
             ctx.currColumn++;
-            ctx.results.tokens.emplace_back(
-                  Token{.type = TokenType::INTEGER, .lexeme = lex, .line = ctx.currLine});
+            ctx.results.tokens.emplace_back(Token{.type = TokenType::INTEGER,
+                                                  .lexeme = lex,
+                                                  .line = ctx.currLine,
+                                                  .column = tokenInitialColumn(ctx, lex)});
         } else if (nextChr == '.') {
             // A decimal separator indicates that a REAL literal is being scanned.
             if (!allBase10Digits(lex)) {
@@ -321,8 +335,10 @@ namespace obc {
             // contains any hexadecimal digit that is not a base 10 digit.
             if (allBase10Digits(lex)) {
                 // The lexeme is a valid integer literal in decimal form.
-                ctx.results.tokens.emplace_back(
-                      Token{.type = TokenType::INTEGER, .lexeme = lex, .line = ctx.currLine});
+                ctx.results.tokens.emplace_back(Token{.type = TokenType::INTEGER,
+                                                      .lexeme = lex,
+                                                      .line = ctx.currLine,
+                                                      .column = tokenInitialColumn(ctx, lex)});
             } else {
                 // A hexadecimal digit that is not a base 10 digit has been found; report the
                 // error.
@@ -350,9 +366,18 @@ namespace obc {
             ctx.currColumn++;
             scanRealScaleFactor(ctx, lex);
         } else {
-            ctx.results.tokens.emplace_back(
-                  Token{.type = TokenType::REAL, .lexeme = lex, .line = ctx.currLine});
+            ctx.results.tokens.emplace_back(Token{.type = TokenType::REAL,
+                                                  .lexeme = lex,
+                                                  .line = ctx.currLine,
+                                                  .column = tokenInitialColumn(ctx, lex)});
         }
+    }
+
+    int Scanner::tokenInitialColumn(const ScanContext& ctx, const std::string& lex) {
+        const int currColumn = ctx.getCurrColumn();
+        const int initialColumn =
+              currColumn >= 0 ? currColumn - static_cast<int>(lex.size()) + 1 : currColumn;
+        return initialColumn;
     }
 
     void Scanner::scanRealScaleFactor(ScanContext& ctx, const std::string& realBasePart) {
@@ -384,8 +409,10 @@ namespace obc {
                     ctx.currColumn++;
                     nextCh = nextChrNoAdvance(ctx);
                 }
-                ctx.results.tokens.push_back(
-                      Token{.type = TokenType::REAL, .lexeme = lex, .line = ctx.currLine});
+                ctx.results.tokens.push_back(Token{.type = TokenType::REAL,
+                                                   .lexeme = lex,
+                                                   .line = ctx.currLine,
+                                                   .column = tokenInitialColumn(ctx, lex)});
             }
         }
     }
@@ -401,13 +428,20 @@ namespace obc {
         }
         const TokenType tkType =
               Token::typeFromIdentifierLexeme(ctx.lowerCaseKeywords, identLex);
-        ctx.results.tokens.emplace_back(
-              Token{.type = tkType, .lexeme = identLex, .line = ctx.currLine});
+        ctx.results.tokens.emplace_back(Token{.type = tkType,
+                                              .lexeme = identLex,
+                                              .line = ctx.currLine,
+                                              .column = tokenInitialColumn(ctx, identLex)});
     }
 
     void Scanner::scanComment(ScanContext& ctx) {
         bool endOfCommentFound = false;
         std::string strLex{};
+        // As a comment can be multiline, the scan line and column at the start of its
+        // lexeme extraction are captured to be used later when the comment token is
+        // constructed
+        const int initialLine = ctx.currLine;
+        const int initialColumn = ctx.getCurrColumn();
         while (!allScanned(ctx) && !endOfCommentFound) {
             switch (const char nextChr = nextChrNoAdvance(ctx)) {
                 case '\n':
@@ -437,7 +471,8 @@ namespace obc {
                         ctx.currColumn++;
                         ctx.results.tokens.emplace_back(Token{.type = TokenType::COMMENT,
                                                               .lexeme = strLex,
-                                                              .line = ctx.currLine});
+                                                              .line = initialLine,
+                                                              .column = initialColumn});
                         endOfCommentFound = true;
                     }
                     break;
@@ -475,8 +510,11 @@ namespace obc {
                     // Double-quotes (End of string literal) found
                     ctx.lexPos++;
                     ctx.currColumn++;
-                    ctx.results.tokens.emplace_back(Token{
-                          .type = TokenType::STRING, .lexeme = strLex, .line = ctx.currLine});
+                    ctx.results.tokens.emplace_back(
+                          Token{.type = TokenType::STRING,
+                                .lexeme = strLex,
+                                .line = ctx.currLine,
+                                .column = tokenInitialColumn(ctx, strLex)});
                 }
                 break;
             }
@@ -485,18 +523,19 @@ namespace obc {
 
     void Scanner::handleTwoCharTokens(const char firstChr, const TokenType expectTokenType,
                                       const char expectSecondChr, ScanContext& ctx) {
-        std::string twoChrLex{firstChr};
+        std::string strLex{firstChr};
+        TokenType tokenType = expectTokenType;
         if (nextChrMatch(ctx, expectSecondChr)) {
-            twoChrLex += expectSecondChr;
-            ctx.results.tokens.emplace_back(
-                  Token{.type = expectTokenType, .lexeme = twoChrLex, .line = ctx.currLine});
+            strLex += expectSecondChr;
             ctx.currColumn += 2;
         } else {
-            ctx.results.tokens.emplace_back(Token{.type = Token::typeFromChar(firstChr),
-                                                  .lexeme = std::string{firstChr},
-                                                  .line = ctx.currLine});
             ctx.currColumn++;
+            tokenType = Token::typeFromChar(firstChr);
         }
+        ctx.results.tokens.emplace_back(Token{.type = tokenType,
+                                              .lexeme = strLex,
+                                              .line = ctx.currLine,
+                                              .column = tokenInitialColumn(ctx, strLex)});
     }
 
 } // namespace obc

@@ -60,10 +60,14 @@ END LowerCaseModule.
     ASSERT_EQ(res.errors.size(), 0);
     ASSERT_EQ(res.tokens.size(), expectTokens);
     EXPECT_EQ(res.tokens.at(0).type, TokenType::MODULE);
+    EXPECT_EQ(res.tokens.at(0).line, 2);
+    EXPECT_EQ(res.tokens.at(0).column, 1);
     EXPECT_EQ(res.tokens.at(1).type, TokenType::IDENT);
     EXPECT_EQ(res.tokens.at(38).type, TokenType::END);
     EXPECT_EQ(res.tokens.at(39).type, TokenType::IDENT);
     EXPECT_EQ(res.tokens.at(39).lexeme, "LowerCaseModule");
+    EXPECT_EQ(res.tokens.at(39).line, 15);
+    EXPECT_EQ(res.tokens.at(39).column, 5);
     EXPECT_EQ(res.tokens.at(40).type, TokenType::DOT);
     EXPECT_EQ(res.tokens.at(res.tokens.size() - 1).type, TokenType::EOM);
 
@@ -80,6 +84,8 @@ END LowerCaseModule.
     EXPECT_EQ(res.tokens.at(38).lexeme, "end");
     EXPECT_EQ(res.tokens.at(39).type, TokenType::IDENT);
     EXPECT_EQ(res.tokens.at(39).lexeme, "LowerCaseModule");
+    EXPECT_EQ(res.tokens.at(39).line, 15);
+    EXPECT_EQ(res.tokens.at(39).column, 5);
     EXPECT_EQ(res.tokens.at(40).type, TokenType::DOT);
     EXPECT_EQ(res.tokens.at(41).type, TokenType::EOM);
 
@@ -201,6 +207,8 @@ TEST(ScannerTests, TestModuleWithStringLiteral) {
     EXPECT_EQ(tokens.at(5).type, TokenType::LEFT_PAREN);
     EXPECT_EQ(tokens.at(6).type, TokenType::STRING);
     EXPECT_EQ(tokens.at(6).lexeme, "Hello world!");
+    EXPECT_EQ(tokens.at(6).line, 3);
+    EXPECT_EQ(tokens.at(6).column, 24);
     EXPECT_EQ(tokens.at(tokens.size() - 1).type, TokenType::EOM);
 }
 
@@ -246,6 +254,7 @@ TEST(ScannerTests, TestModuleWithNumericLiterals) {
     EXPECT_EQ(tokens.at(37).type, TokenType::STRING);
     EXPECT_EQ(tokens.at(37).lexeme, "*");
     EXPECT_EQ(tokens.at(37).line, 9);
+    EXPECT_EQ(tokens.at(37).column, 36);
 
     EXPECT_EQ(tokens.at(tokens.size() - 1).type, TokenType::EOM);
 

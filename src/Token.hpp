@@ -49,6 +49,7 @@ namespace obc {
         TokenType type;
         std::string lexeme;
         int line;
+        int column;
 
         std::string typeString() const;
 

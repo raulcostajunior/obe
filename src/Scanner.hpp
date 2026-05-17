@@ -157,6 +157,22 @@ namespace obc {
          */
         static void scanRealNumber(ScanContext& ctx, const std::string& integerPart);
 
+
+        /**
+         * @brief Calculates the initial column position of a token within its line in the
+         * scanned source.
+         *
+         * @param ctx the current scan context, providing relevant state information for the
+         * scanning process.
+         * @param lex the lexeme whose initial column position is to be computed.
+         *
+         * @return the initial column position of the token in the source input.
+         *
+         * @note This method should only be used for single line tokens. The only Oberon 07
+         * token type that is not single-line is the COMMENT.
+         */
+        static int tokenInitialColumn(const ScanContext& ctx, const std::string& lex);
+
         /**
          * @brief Scans the optional scale factor at the end of a real number literal.
          *
