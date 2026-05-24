@@ -376,7 +376,7 @@ namespace obc {
     int Scanner::tokenInitialColumn(const ScanContext& ctx, const std::string& lex) {
         const int currColumn = ctx.getCurrColumn();
         const int initialColumn =
-              currColumn >= 0 ? currColumn - static_cast<int>(lex.size()) + 1 : currColumn;
+              currColumn >= 0 ? currColumn - static_cast<int>(lex.size()) : currColumn;
         return initialColumn;
     }
 
