@@ -219,8 +219,12 @@ TEST(ScannerTests, TestModuleWithStringLiteral) {
     auto [tokens, errors] = Scanner::scanSrcFile(srcFilePath);
     ASSERT_EQ(tokens.size(), 18);
     EXPECT_EQ(tokens.at(0).type, TokenType::MODULE);
+    EXPECT_EQ(tokens.at(0).line, 1);
+    EXPECT_EQ(tokens.at(0).column, 1);
     EXPECT_EQ(tokens.at(1).type, TokenType::IDENT);
     EXPECT_EQ(tokens.at(1).lexeme, "Hello");
+    EXPECT_EQ(tokens.at(1).line, 1);
+    EXPECT_EQ(tokens.at(1).column, 8);
     EXPECT_EQ(tokens.at(3).type, TokenType::BEGIN);
     EXPECT_EQ(tokens.at(4).type, TokenType::IDENT);
     EXPECT_EQ(tokens.at(4).lexeme, "WriteLn");
@@ -229,6 +233,10 @@ TEST(ScannerTests, TestModuleWithStringLiteral) {
     EXPECT_EQ(tokens.at(6).lexeme, "Hello world!");
     EXPECT_EQ(tokens.at(6).line, 3);
     EXPECT_EQ(tokens.at(6).column, 24);
+    EXPECT_EQ(tokens.at(11).type, TokenType::STRING);
+    EXPECT_EQ(tokens.at(11).lexeme, "\n"); // 0AX is a char literal in hex notation: 10 (0AX) is the code for "\n"
+    EXPECT_EQ(tokens.at(11).line, 4);
+    EXPECT_EQ(tokens.at(11).column, 17);
     EXPECT_EQ(tokens.at(tokens.size() - 1).type, TokenType::EOM);
 }
 
@@ -245,9 +253,17 @@ TEST(ScannerTests, TestModuleWithNumericLiterals) {
     // (2E), a plus, and a 4 integer.
     EXPECT_EQ(tokens.at(4).type, TokenType::IDENT);
     EXPECT_EQ(tokens.at(4).lexeme, "InvalidRealNoIntPart");
+    EXPECT_EQ(tokens.at(4).line, 3);
+    EXPECT_EQ(tokens.at(4).column, 15);
     EXPECT_EQ(tokens.at(5).type, TokenType::EQUAL);
+    EXPECT_EQ(tokens.at(5).line, 3);
+    EXPECT_EQ(tokens.at(5).column, 36);
     EXPECT_EQ(tokens.at(6).type, TokenType::DOT);
+    EXPECT_EQ(tokens.at(6).line, 3);
+    EXPECT_EQ(tokens.at(6).column, 38);
     EXPECT_EQ(tokens.at(7).type, TokenType::PLUS);
+    EXPECT_EQ(tokens.at(7).line, 3);
+    EXPECT_EQ(tokens.at(7).column, 41);
     EXPECT_EQ(tokens.at(8).type, TokenType::INTEGER);
     EXPECT_EQ(tokens.at(8).lexeme, "4");
     // ValidRealNoDecimalScale must be scanned as a REAL with the appropriate lexeme.
@@ -256,6 +272,8 @@ TEST(ScannerTests, TestModuleWithNumericLiterals) {
     EXPECT_EQ(tokens.at(16).type, TokenType::EQUAL);
     EXPECT_EQ(tokens.at(17).type, TokenType::REAL);
     EXPECT_EQ(tokens.at(17).lexeme, "23.E+2");
+    EXPECT_EQ(tokens.at(17).line, 5);
+    EXPECT_EQ(tokens.at(17).column, 41);
     EXPECT_EQ(tokens.at(19).type, TokenType::COMMENT);
     // ValidRealNoDecimalNScale must be scanned as a REAL with the appropriate lexeme.
     EXPECT_EQ(tokens.at(21).type, TokenType::IDENT);
