@@ -63,12 +63,23 @@ END LowerCaseModule.
     EXPECT_EQ(res.tokens.at(0).line, 2);
     EXPECT_EQ(res.tokens.at(0).column, 1);
     EXPECT_EQ(res.tokens.at(1).type, TokenType::IDENT);
+    EXPECT_EQ(res.tokens.at(1).lexeme, "LowerCaseModule");
+    EXPECT_EQ(res.tokens.at(1).line, 2);
+    EXPECT_EQ(res.tokens.at(1).column, 8);
+    EXPECT_EQ(res.tokens.at(2).type, TokenType::SEMICOLON);
+    EXPECT_EQ(res.tokens.at(2).line, 2);
+    EXPECT_EQ(res.tokens.at(2).column, 23);
+    EXPECT_EQ(res.tokens.at(17).type, TokenType::LESS);
+    EXPECT_EQ(res.tokens.at(17).line, 7);
+    EXPECT_EQ(res.tokens.at(17).column, 13);
     EXPECT_EQ(res.tokens.at(38).type, TokenType::END);
     EXPECT_EQ(res.tokens.at(39).type, TokenType::IDENT);
     EXPECT_EQ(res.tokens.at(39).lexeme, "LowerCaseModule");
     EXPECT_EQ(res.tokens.at(39).line, 15);
     EXPECT_EQ(res.tokens.at(39).column, 5);
     EXPECT_EQ(res.tokens.at(40).type, TokenType::DOT);
+    EXPECT_EQ(res.tokens.at(40).line, 15);
+    EXPECT_EQ(res.tokens.at(40).column, 20);
     EXPECT_EQ(res.tokens.at(res.tokens.size() - 1).type, TokenType::EOM);
 
     // A lexically valid file with lowerCaseKeywords should be successfully parsed with none
@@ -79,7 +90,12 @@ END LowerCaseModule.
     ASSERT_EQ(res.tokens.size(), expectTokens);
     EXPECT_EQ(res.tokens.at(0).type, TokenType::IDENT);
     EXPECT_EQ(res.tokens.at(0).lexeme, "module");
+    EXPECT_EQ(res.tokens.at(0).line, 2);
+    EXPECT_EQ(res.tokens.at(0).column, 1);
     EXPECT_EQ(res.tokens.at(1).type, TokenType::IDENT);
+    EXPECT_EQ(res.tokens.at(1).lexeme, "LowerCaseModule");
+    EXPECT_EQ(res.tokens.at(1).line, 2);
+    EXPECT_EQ(res.tokens.at(1).column, 8);
     EXPECT_EQ(res.tokens.at(38).type, TokenType::IDENT);
     EXPECT_EQ(res.tokens.at(38).lexeme, "end");
     EXPECT_EQ(res.tokens.at(39).type, TokenType::IDENT);
@@ -87,6 +103,8 @@ END LowerCaseModule.
     EXPECT_EQ(res.tokens.at(39).line, 15);
     EXPECT_EQ(res.tokens.at(39).column, 5);
     EXPECT_EQ(res.tokens.at(40).type, TokenType::DOT);
+    EXPECT_EQ(res.tokens.at(40).line, 15);
+    EXPECT_EQ(res.tokens.at(40).column, 20);
     EXPECT_EQ(res.tokens.at(41).type, TokenType::EOM);
 
     // A lexically valid file with uppercase keywords should be successfully parsed with all
@@ -100,6 +118,8 @@ END LowerCaseModule.
     EXPECT_EQ(res.tokens.at(39).type, TokenType::IDENT);
     EXPECT_EQ(res.tokens.at(39).lexeme, "LowerCaseModule");
     EXPECT_EQ(res.tokens.at(40).type, TokenType::DOT);
+    EXPECT_EQ(res.tokens.at(40).line, 15);
+    EXPECT_EQ(res.tokens.at(40).column, 20);
     EXPECT_EQ(res.tokens.at(41).type, TokenType::EOM);
 
     // A lexically valid file with uppercase keywords should be successfully parsed with none
