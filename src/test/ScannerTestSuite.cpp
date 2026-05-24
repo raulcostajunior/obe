@@ -56,7 +56,7 @@ END LowerCaseModule.
 
     // A lexically valid file with lowerCase keywords should be successfully parsed with all
     // the keywords identified with the scanner in lowerCaseKeywords mode.
-    auto res = Scanner::scan(std::string{lowerCaseSrc}, true);
+    auto res = Scanner::scan(lowerCaseSrc, true);
     ASSERT_EQ(res.errors.size(), 0);
     ASSERT_EQ(res.tokens.size(), expectTokens);
     EXPECT_EQ(res.tokens.at(0).type, TokenType::MODULE);
@@ -74,7 +74,7 @@ END LowerCaseModule.
     // A lexically valid file with lowerCaseKeywords should be successfully parsed with none
     // of the keywords identified when the scanner is in the default uppercase-keywords mode.
     // All keywords should be identified as token identifiers.
-    res = Scanner::scan(std::string{lowerCaseSrc});
+    res = Scanner::scan(lowerCaseSrc);
     ASSERT_EQ(res.errors.size(), 0);
     ASSERT_EQ(res.tokens.size(), expectTokens);
     EXPECT_EQ(res.tokens.at(0).type, TokenType::IDENT);
@@ -91,7 +91,7 @@ END LowerCaseModule.
 
     // A lexically valid file with uppercase keywords should be successfully parsed with all
     // the keywords identified with the scanner in the default uppercase-keywords mode.
-    res = Scanner::scan(std::string{upperCaseSrc});
+    res = Scanner::scan(upperCaseSrc);
     ASSERT_EQ(res.errors.size(), 0);
     ASSERT_EQ(res.tokens.size(), expectTokens);
     EXPECT_EQ(res.tokens.at(0).type, TokenType::MODULE);
@@ -105,7 +105,7 @@ END LowerCaseModule.
     // A lexically valid file with uppercase keywords should be successfully parsed with none
     // of the keywords identified when the scanner is in lowercase-keywords mode.
     // All keywords should be identified as token identifiers.
-    res = Scanner::scan(std::string{upperCaseSrc}, true);
+    res = Scanner::scan(upperCaseSrc, true);
     ASSERT_EQ(res.errors.size(), 0);
     ASSERT_EQ(res.tokens.size(), expectTokens);
     EXPECT_EQ(res.tokens.at(0).type, TokenType::IDENT);
@@ -194,9 +194,9 @@ BEGIN
 
 TEST(ScannerTests, TestModuleWithStringLiteral) {
     namespace fs = std::filesystem;
-    const std::string src_file_path{
+    const std::string srcFilePath{
           fs::path(__FILE__).parent_path().append("oberon_src").append("Hello.Mod").string()};
-    auto [tokens, errors] = Scanner::scanSrcFile(src_file_path);
+    auto [tokens, errors] = Scanner::scanSrcFile(srcFilePath);
     ASSERT_EQ(tokens.size(), 18);
     EXPECT_EQ(tokens.at(0).type, TokenType::MODULE);
     EXPECT_EQ(tokens.at(1).type, TokenType::IDENT);
@@ -214,12 +214,12 @@ TEST(ScannerTests, TestModuleWithStringLiteral) {
 
 TEST(ScannerTests, TestModuleWithNumericLiterals) {
     namespace fs = std::filesystem;
-    const std::string src_file_path{fs::path(__FILE__)
+    const std::string srcFilePath{fs::path(__FILE__)
                                           .parent_path()
                                           .append("oberon_src")
                                           .append("NumLiterals.Mod")
                                           .string()};
-    auto [tokens, errors] = Scanner::scanSrcFile(src_file_path);
+    auto [tokens, errors] = Scanner::scanSrcFile(srcFilePath);
     ASSERT_EQ(tokens.size(), 74);
     // InvalidRealNoIntPart = .2E+4 must be scanned as a dot, followed by an invalid hex int
     // (2E), a plus, and a 4 integer.
