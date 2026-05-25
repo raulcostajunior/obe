@@ -81,6 +81,8 @@ END LowerCaseModule.
     EXPECT_EQ(res.tokens.at(40).line, 15);
     EXPECT_EQ(res.tokens.at(40).column, 20);
     EXPECT_EQ(res.tokens.at(res.tokens.size() - 1).type, TokenType::EOM);
+    EXPECT_EQ(res.tokens.at(res.tokens.size() - 1).line, 16);
+    EXPECT_EQ(res.tokens.at(res.tokens.size() - 1).column, 1);
 
     // A lexically valid file with lowerCaseKeywords should be successfully parsed with none
     // of the keywords identified when the scanner is in the default uppercase-keywords mode.
@@ -106,6 +108,8 @@ END LowerCaseModule.
     EXPECT_EQ(res.tokens.at(40).line, 15);
     EXPECT_EQ(res.tokens.at(40).column, 20);
     EXPECT_EQ(res.tokens.at(41).type, TokenType::EOM);
+    EXPECT_EQ(res.tokens.at(res.tokens.size() - 1).line, 16);
+    EXPECT_EQ(res.tokens.at(res.tokens.size() - 1).column, 1);
 
     // A lexically valid file with uppercase keywords should be successfully parsed with all
     // the keywords identified with the scanner in the default uppercase-keywords mode.
@@ -121,6 +125,8 @@ END LowerCaseModule.
     EXPECT_EQ(res.tokens.at(40).line, 15);
     EXPECT_EQ(res.tokens.at(40).column, 20);
     EXPECT_EQ(res.tokens.at(41).type, TokenType::EOM);
+    EXPECT_EQ(res.tokens.at(res.tokens.size() - 1).line, 16);
+    EXPECT_EQ(res.tokens.at(res.tokens.size() - 1).column, 1);
 
     // A lexically valid file with uppercase keywords should be successfully parsed with none
     // of the keywords identified when the scanner is in lowercase-keywords mode.
@@ -143,7 +149,8 @@ TEST(ScannerTests, TestModuleWithUnfinishedComment) {
     // A source file that finishes with an unfinished comment must trigger an error.
     const std::string unfinishedCommentMsg{"Source module ends in an unfinished comment."};
 
-    const std::string moduleSrc{R"(
+    const std::string moduleSrc{
+          R"(
 MODULE UnfinishedComment;
 
 (* This is a multiline, open ended
@@ -156,6 +163,8 @@ comment and should be rejected.
     EXPECT_EQ(tokens.at(1).lexeme, "UnfinishedComment");
     EXPECT_EQ(tokens.at(2).type, TokenType::SEMICOLON);
     EXPECT_EQ(tokens.at(tokens.size() - 1).type, TokenType::EOM);
+    EXPECT_EQ(tokens.at(tokens.size() - 1).line, 6);
+    EXPECT_EQ(tokens.at(tokens.size() - 1).column, 1);
 
     ASSERT_EQ(errors.size(), 1);
     EXPECT_EQ(errors.at(0).line, 6);
@@ -167,7 +176,8 @@ TEST(ScannerTests, TestModuleWithInvalidSymbol) {
     // A source file with an invalid terminal symbol must trigger a lexical error.
     // The error must not stop the scanner, which must continue finding tokens
     // until the end of the module.
-    const std::string invalidSymbolSrcPrefix{R"(
+    const std::string invalidSymbolSrcPrefix{
+          R"(
 MODULE WithInvalidSymbol;
 
 (* ? is not a valid terminal in the language; it should be accepted in a 
@@ -234,7 +244,8 @@ TEST(ScannerTests, TestModuleWithStringLiteral) {
     EXPECT_EQ(tokens.at(6).line, 3);
     EXPECT_EQ(tokens.at(6).column, 24);
     EXPECT_EQ(tokens.at(11).type, TokenType::STRING);
-    EXPECT_EQ(tokens.at(11).lexeme, "\n"); // 0AX is a char literal in hex notation: 10 (0AX) is the code for "\n"
+    EXPECT_EQ(tokens.at(11).lexeme,
+              "\n"); // 0AX is a char literal in hex notation: 10 (0AX) is the code for "\n"
     EXPECT_EQ(tokens.at(11).line, 4);
     EXPECT_EQ(tokens.at(11).column, 17);
     EXPECT_EQ(tokens.at(tokens.size() - 1).type, TokenType::EOM);
@@ -243,10 +254,10 @@ TEST(ScannerTests, TestModuleWithStringLiteral) {
 TEST(ScannerTests, TestModuleWithNumericLiterals) {
     namespace fs = std::filesystem;
     const std::string srcFilePath{fs::path(__FILE__)
-                                          .parent_path()
-                                          .append("oberon_src")
-                                          .append("NumLiterals.Mod")
-                                          .string()};
+                                        .parent_path()
+                                        .append("oberon_src")
+                                        .append("NumLiterals.Mod")
+                                        .string()};
     auto [tokens, errors] = Scanner::scanSrcFile(srcFilePath);
     ASSERT_EQ(tokens.size(), 74);
     // InvalidRealNoIntPart = .2E+4 must be scanned as a dot, followed by an invalid hex int
