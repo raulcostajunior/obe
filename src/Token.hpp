@@ -5,10 +5,10 @@
 #include <string>
 
 // The following 4 pre-processor definitions come from "minwindef.h" (part of WIN SDK) and are
-// included when a toolchain based on the Microsoft C/C++ compiler is used (issue detected when
-// MSVC 19.39.33523.0 was used, but most probably happens with other versions of the compiler
-// as well). They have to be undefined before the declaration of the TokenType enum to prevent
-// the pre-processor from turning them into invalid source.
+// included when a toolchain based on the Microsoft C/C++ compiler is used. The issue was
+// detected with MSVC 19.39.33523.0, but it most likely happens with other versions of the
+// compiler as well. They have to be undefined before the declaration of the TokenType enum to
+// prevent the pre-processor from turning them into an invalid source.
 #undef CONST
 #undef TRUE
 #undef FALSE
@@ -68,13 +68,13 @@ namespace obe {
         /**
          * @brief Returns the token type of the keyword that corresponds to a given lexeme.
          *
-         * @note internally this method works with case-sensitive comparisons and the input
+         * @note Internally, this method works with case-sensitive comparisons, and the input
          * lexeme must be all upper-case as this is how the Oberon language specifies its
          * keywords. Any desired support for lowercase (or mixed case) keywords must be provided
          * by the callers of this method. For example, the caller can (and should) convert the
-         * lexeme to upper-case before calling this method. Any lexeme not recognized as keyword
-         * will be considered an identifier - the caller must thus be sure that the lexeme
-         * doesn't match any non-keyword token at the time it calls this method.
+         * lexeme to upper-case before calling this method. Any lexeme not recognized as a
+         * keyword will be considered an identifier - the caller must thus be sure that the
+         * lexeme doesn't match any non-keyword token at the time it calls this method.
          *
          * @param lex the lexeme whose keyword token type should be returned.
          * @return the keyword token type corresponding to the lexeme.
@@ -83,7 +83,7 @@ namespace obe {
 
 
         /**
-         * @brief Gets the token type of given identifier lexeme.
+         * @brief Gets the token type of a given identifier lexeme.
          *
          * @param lowerCaseKeywords should assume lowercase keywords?
          * @param idLex the identifier lexeme whose token type should be determined.
