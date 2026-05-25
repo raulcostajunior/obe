@@ -1,11 +1,11 @@
-#ifndef PARSER_HPP
-#define PARSER_HPP
+#ifndef OBE_PARSER_HPP
+#define OBE_PARSER_HPP
 
 #include <vector>
 
 #include "Token.hpp"
 
-namespace obc {
+namespace obe {
 
     class Parser {
        public:
@@ -15,6 +15,6 @@ namespace obc {
         std::vector<Token> m_tokens;
     };
 
-} // namespace obc
+} // namespace obe
 
-#endif // PARSER_HPP
+#endif // OBE_PARSER_HPP

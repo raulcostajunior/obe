@@ -8,7 +8,7 @@
 #include "ErrorInfo.hpp"
 #include "TokenUtils.hpp"
 
-namespace obc {
+namespace obe {
     // Size of the buffer for storing an errno corresponding message.
     constexpr size_t ERR_MSG_BUFF_SIZE = 256U;
 
@@ -534,4 +534,4 @@ namespace obc {
                                               .line = ctx.currLine,
                                               .column = ctx.currTokenColumn});
     }
-} // namespace obc
+} // namespace obe

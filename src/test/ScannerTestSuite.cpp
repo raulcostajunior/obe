@@ -4,7 +4,7 @@
 
 #include "Scanner.hpp"
 
-using namespace obc;
+using namespace obe;
 
 TEST(ScannerTests, TestEmptyFile) {
     // An empty file must have the EOM token and no errors.

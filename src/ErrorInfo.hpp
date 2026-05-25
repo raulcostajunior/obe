@@ -1,9 +1,9 @@
-#ifndef OBC_ERRORINFO_HPP
-#define OBC_ERRORINFO_HPP
+#ifndef OBE_ERRORINFO_HPP
+#define OBE_ERRORINFO_HPP
 
 #include <string>
 
-namespace obc {
+namespace obe {
 
     struct ErrorInfo {
         int line = -1;   // -1 flags for a non-locatable error
@@ -13,6 +13,6 @@ namespace obc {
 
     std::ostream& operator<<(std::ostream& ostr, const ErrorInfo& errInf);
 
-} // namespace obc
+} // namespace obe
 
-#endif // OBC_ERRORINFO_HPP
+#endif // OBE_ERRORINFO_HPP

@@ -1,11 +1,11 @@
-#ifndef OBC_COMPILER_HPP
-#define OBC_COMPILER_HPP
+#ifndef OBE_COMPILER_HPP
+#define OBE_COMPILER_HPP
 
 #include <vector>
 
 #include "ErrorInfo.hpp"
 
-namespace obc {
+namespace obe {
     struct CompilationResults {
         std::vector<ErrorInfo> errors;
         // TODO: Add data structure representing the generated WASM module
@@ -20,6 +20,6 @@ namespace obc {
        private:
     };
 
-} // namespace obc
+} // namespace obe
 
-#endif // OBC_COMPILER_HPP
+#endif // OBE_COMPILER_HPP

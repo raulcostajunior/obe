@@ -1,9 +1,9 @@
-#ifndef OBC_TOKEN_UTILS_HPP
-#define OBC_TOKEN_UTILS_HPP
+#ifndef OBE_TOKEN_UTILS_HPP
+#define OBE_TOKEN_UTILS_HPP
 
 #include <string>
 
-namespace obc {
+namespace obe {
 
     /**
      * @brief Returns whether a given char is an hexadecimal digit or not.
@@ -24,6 +24,6 @@ namespace obc {
      */
     bool allBase10Digits(const std::string& str);
 
-} // namespace obc
+} // namespace obe
 
-#endif // OBC_TOKEN_UTILS_HPP
+#endif // OBE_TOKEN_UTILS_HPP

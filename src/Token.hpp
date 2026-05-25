@@ -1,5 +1,5 @@
-#ifndef TOKEN_HPP
-#define TOKEN_HPP
+#ifndef OBE_TOKEN_HPP
+#define OBE_TOKEN_HPP
 
 #include <iostream>
 #include <string>
@@ -14,7 +14,7 @@
 #undef FALSE
 #undef IN
 
-namespace obc {
+namespace obe {
 
     enum class TokenType : unsigned char {
         // clang-format off
@@ -97,6 +97,6 @@ namespace obc {
 
     std::ostream& operator<<(std::ostream& out, const Token& token);
 
-} // namespace obc
+} // namespace obe
 
 #endif

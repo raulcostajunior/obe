@@ -1,5 +1,5 @@
-#ifndef SCANNER_HPP
-#define SCANNER_HPP
+#ifndef OBE_SCANNER_HPP
+#define OBE_SCANNER_HPP
 
 #include <cstdint>
 #include <vector>
@@ -7,7 +7,7 @@
 #include "ErrorInfo.hpp"
 #include "Token.hpp"
 
-namespace obc {
+namespace obe {
 
     struct ScanResults {
         std::vector<Token> tokens;
@@ -182,5 +182,5 @@ namespace obc {
         static void handleTwoCharTokens(char firstChr, TokenType expectTokenType,
                                         char expectSecondChr, ScanContext& ctx);
     };
-} // namespace obc
+} // namespace obe
 #endif

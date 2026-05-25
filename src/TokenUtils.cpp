@@ -2,7 +2,7 @@
 
 #include <cctype>
 
-namespace obc {
+namespace obe {
 
     bool isHexDigit(char chr) {
         return (isdigit(chr) != 0 || chr == 'A' || chr == 'B' || chr == 'D' || chr == 'E' ||
@@ -18,4 +18,4 @@ namespace obc {
         return true;
     }
 
-} // namespace obc
+} // namespace obe
