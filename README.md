@@ -22,9 +22,9 @@ is used.
 
 #### Oberon+
 
-**obe** is only my first take on writing a compiler, and most probably nothing too useful will come out of it.
+#### Oberon+
 
-To get really serious about Oberon and its future, take a GOOD look at [Oberon+](https://oberon-lang.github.io/).
+A complete implementation of Oberon-07 with clever and useful extensions can be found at [Oberon](https://github.com/rochus-keller/Oberon). Details about the extended Oberon-07 language, called Oberon+, are available at [Oberon+](https://oberon-lang.github.io/).
 
 #### Oberon (the Uranus' moon, not the language) in the news:
 
