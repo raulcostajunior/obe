@@ -18,7 +18,7 @@
 int main(int argc, char **argv) {
     CLI::App app{"An Oberon-07 to LLVM-IR compiler"};
 
-    app.set_version_flag("--version, -v", obc::obcVersion());
+    app.set_version_flag("--version, -v", obe::obcVersion());
 
     bool lowerCaseKeywords{false};
     app.add_flag("--lower-keywords", lowerCaseKeywords,
@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
     }
 
     // For now, we just scan and printout the results.
-    auto res = obc::Scanner::scanSrcFile(srcFile, lowerCaseKeywords);
+    auto res = obe::Scanner::scanSrcFile(srcFile, lowerCaseKeywords);
     // Report on tokens.
     if (res.tokens.empty()) {
         std::cout << "No token found in '" << srcFile << "'.\n";
@@ -67,6 +67,6 @@ int main(int argc, char **argv) {
         }
     }
 
-    obc::Parser parser{std::move(res.tokens)};
+    obe::Parser parser{std::move(res.tokens)};
 }
 // NOLINTEND(bugprone-exception-escape)

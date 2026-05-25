@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <unordered_map>
 
-namespace obc {
+namespace obe {
 
     std::string Token::typeString() const {
         static std::map<TokenType, std::string> tokenTypeToString{
@@ -140,4 +140,4 @@ namespace obc {
         return out;
     }
 
-} // namespace obc
+} // namespace obe

@@ -1,18 +1,18 @@
-#ifndef OBC_TOKEN_UTILS_HPP
-#define OBC_TOKEN_UTILS_HPP
+#ifndef OBE_TOKEN_UTILS_HPP
+#define OBE_TOKEN_UTILS_HPP
 
 #include <string>
 
-namespace obc {
+namespace obe {
 
     /**
-     * @brief Returns whether a given char is an hexadecimal digit or not.
+     * @brief Returns whether a given char is a hexadecimal digit or not.
      *
      * @note Oberon's grammar specifies only uppercase 'A' to 'F' as valid hexadecimal
      * digits. We stick to the specification in here.
      *
      * @param chr the character to be verified
-     * @return true if chr is an hexadecimal digit; false otherwise.
+     * @return true if chr is a hexadecimal digit; false otherwise.
      */
     bool isHexDigit(char chr);
 
@@ -24,6 +24,6 @@ namespace obc {
      */
     bool allBase10Digits(const std::string& str);
 
-} // namespace obc
+} // namespace obe
 
-#endif // OBC_TOKEN_UTILS_HPP
+#endif // OBE_TOKEN_UTILS_HPP

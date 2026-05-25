@@ -57,12 +57,10 @@ checks.json
 
 # CLion specific
 .idea
+.junie
 
 # Qt Creator specific
 .qtcreator
-
-# Fleet specific
-.fleet
 
 # clangd specific
 .clangd/

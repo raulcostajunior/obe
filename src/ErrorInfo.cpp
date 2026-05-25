@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-namespace obc {
+namespace obe {
 
     std::ostream& operator<<(std::ostream& ostr, const ErrorInfo& errInf) {
         if (errInf.line < 0 && errInf.column < 0) {

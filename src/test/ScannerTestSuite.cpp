@@ -4,7 +4,7 @@
 
 #include "Scanner.hpp"
 
-using namespace obc;
+using namespace obe;
 
 TEST(ScannerTests, TestEmptyFile) {
     // An empty file must have the EOM token and no errors.
@@ -56,36 +56,64 @@ END LowerCaseModule.
 
     // A lexically valid file with lowerCase keywords should be successfully parsed with all
     // the keywords identified with the scanner in lowerCaseKeywords mode.
-    auto res = Scanner::scan(std::string{lowerCaseSrc}, true);
+    auto res = Scanner::scan(lowerCaseSrc, true);
     ASSERT_EQ(res.errors.size(), 0);
     ASSERT_EQ(res.tokens.size(), expectTokens);
     EXPECT_EQ(res.tokens.at(0).type, TokenType::MODULE);
+    EXPECT_EQ(res.tokens.at(0).line, 2);
+    EXPECT_EQ(res.tokens.at(0).column, 1);
     EXPECT_EQ(res.tokens.at(1).type, TokenType::IDENT);
+    EXPECT_EQ(res.tokens.at(1).lexeme, "LowerCaseModule");
+    EXPECT_EQ(res.tokens.at(1).line, 2);
+    EXPECT_EQ(res.tokens.at(1).column, 8);
+    EXPECT_EQ(res.tokens.at(2).type, TokenType::SEMICOLON);
+    EXPECT_EQ(res.tokens.at(2).line, 2);
+    EXPECT_EQ(res.tokens.at(2).column, 23);
+    EXPECT_EQ(res.tokens.at(17).type, TokenType::LESS);
+    EXPECT_EQ(res.tokens.at(17).line, 7);
+    EXPECT_EQ(res.tokens.at(17).column, 13);
     EXPECT_EQ(res.tokens.at(38).type, TokenType::END);
     EXPECT_EQ(res.tokens.at(39).type, TokenType::IDENT);
     EXPECT_EQ(res.tokens.at(39).lexeme, "LowerCaseModule");
+    EXPECT_EQ(res.tokens.at(39).line, 15);
+    EXPECT_EQ(res.tokens.at(39).column, 5);
     EXPECT_EQ(res.tokens.at(40).type, TokenType::DOT);
+    EXPECT_EQ(res.tokens.at(40).line, 15);
+    EXPECT_EQ(res.tokens.at(40).column, 20);
     EXPECT_EQ(res.tokens.at(res.tokens.size() - 1).type, TokenType::EOM);
+    EXPECT_EQ(res.tokens.at(res.tokens.size() - 1).line, 16);
+    EXPECT_EQ(res.tokens.at(res.tokens.size() - 1).column, 1);
 
     // A lexically valid file with lowerCaseKeywords should be successfully parsed with none
     // of the keywords identified when the scanner is in the default uppercase-keywords mode.
     // All keywords should be identified as token identifiers.
-    res = Scanner::scan(std::string{lowerCaseSrc});
+    res = Scanner::scan(lowerCaseSrc);
     ASSERT_EQ(res.errors.size(), 0);
     ASSERT_EQ(res.tokens.size(), expectTokens);
     EXPECT_EQ(res.tokens.at(0).type, TokenType::IDENT);
     EXPECT_EQ(res.tokens.at(0).lexeme, "module");
+    EXPECT_EQ(res.tokens.at(0).line, 2);
+    EXPECT_EQ(res.tokens.at(0).column, 1);
     EXPECT_EQ(res.tokens.at(1).type, TokenType::IDENT);
+    EXPECT_EQ(res.tokens.at(1).lexeme, "LowerCaseModule");
+    EXPECT_EQ(res.tokens.at(1).line, 2);
+    EXPECT_EQ(res.tokens.at(1).column, 8);
     EXPECT_EQ(res.tokens.at(38).type, TokenType::IDENT);
     EXPECT_EQ(res.tokens.at(38).lexeme, "end");
     EXPECT_EQ(res.tokens.at(39).type, TokenType::IDENT);
     EXPECT_EQ(res.tokens.at(39).lexeme, "LowerCaseModule");
+    EXPECT_EQ(res.tokens.at(39).line, 15);
+    EXPECT_EQ(res.tokens.at(39).column, 5);
     EXPECT_EQ(res.tokens.at(40).type, TokenType::DOT);
+    EXPECT_EQ(res.tokens.at(40).line, 15);
+    EXPECT_EQ(res.tokens.at(40).column, 20);
     EXPECT_EQ(res.tokens.at(41).type, TokenType::EOM);
+    EXPECT_EQ(res.tokens.at(res.tokens.size() - 1).line, 16);
+    EXPECT_EQ(res.tokens.at(res.tokens.size() - 1).column, 1);
 
     // A lexically valid file with uppercase keywords should be successfully parsed with all
     // the keywords identified with the scanner in the default uppercase-keywords mode.
-    res = Scanner::scan(std::string{upperCaseSrc});
+    res = Scanner::scan(upperCaseSrc);
     ASSERT_EQ(res.errors.size(), 0);
     ASSERT_EQ(res.tokens.size(), expectTokens);
     EXPECT_EQ(res.tokens.at(0).type, TokenType::MODULE);
@@ -94,12 +122,16 @@ END LowerCaseModule.
     EXPECT_EQ(res.tokens.at(39).type, TokenType::IDENT);
     EXPECT_EQ(res.tokens.at(39).lexeme, "LowerCaseModule");
     EXPECT_EQ(res.tokens.at(40).type, TokenType::DOT);
+    EXPECT_EQ(res.tokens.at(40).line, 15);
+    EXPECT_EQ(res.tokens.at(40).column, 20);
     EXPECT_EQ(res.tokens.at(41).type, TokenType::EOM);
+    EXPECT_EQ(res.tokens.at(res.tokens.size() - 1).line, 16);
+    EXPECT_EQ(res.tokens.at(res.tokens.size() - 1).column, 1);
 
     // A lexically valid file with uppercase keywords should be successfully parsed with none
     // of the keywords identified when the scanner is in lowercase-keywords mode.
     // All keywords should be identified as token identifiers.
-    res = Scanner::scan(std::string{upperCaseSrc}, true);
+    res = Scanner::scan(upperCaseSrc, true);
     ASSERT_EQ(res.errors.size(), 0);
     ASSERT_EQ(res.tokens.size(), expectTokens);
     EXPECT_EQ(res.tokens.at(0).type, TokenType::IDENT);
@@ -117,7 +149,8 @@ TEST(ScannerTests, TestModuleWithUnfinishedComment) {
     // A source file that finishes with an unfinished comment must trigger an error.
     const std::string unfinishedCommentMsg{"Source module ends in an unfinished comment."};
 
-    const std::string moduleSrc{R"(
+    const std::string moduleSrc{
+          R"(
 MODULE UnfinishedComment;
 
 (* This is a multiline, open ended
@@ -130,6 +163,8 @@ comment and should be rejected.
     EXPECT_EQ(tokens.at(1).lexeme, "UnfinishedComment");
     EXPECT_EQ(tokens.at(2).type, TokenType::SEMICOLON);
     EXPECT_EQ(tokens.at(tokens.size() - 1).type, TokenType::EOM);
+    EXPECT_EQ(tokens.at(tokens.size() - 1).line, 6);
+    EXPECT_EQ(tokens.at(tokens.size() - 1).column, 1);
 
     ASSERT_EQ(errors.size(), 1);
     EXPECT_EQ(errors.at(0).line, 6);
@@ -141,7 +176,8 @@ TEST(ScannerTests, TestModuleWithInvalidSymbol) {
     // A source file with an invalid terminal symbol must trigger a lexical error.
     // The error must not stop the scanner, which must continue finding tokens
     // until the end of the module.
-    const std::string invalidSymbolSrcPrefix{R"(
+    const std::string invalidSymbolSrcPrefix{
+          R"(
 MODULE WithInvalidSymbol;
 
 (* ? is not a valid terminal in the language; it should be accepted in a 
@@ -188,38 +224,57 @@ BEGIN
 
 TEST(ScannerTests, TestModuleWithStringLiteral) {
     namespace fs = std::filesystem;
-    const std::string src_file_path{
+    const std::string srcFilePath{
           fs::path(__FILE__).parent_path().append("oberon_src").append("Hello.Mod").string()};
-    auto [tokens, errors] = Scanner::scanSrcFile(src_file_path);
+    auto [tokens, errors] = Scanner::scanSrcFile(srcFilePath);
     ASSERT_EQ(tokens.size(), 18);
     EXPECT_EQ(tokens.at(0).type, TokenType::MODULE);
+    EXPECT_EQ(tokens.at(0).line, 1);
+    EXPECT_EQ(tokens.at(0).column, 1);
     EXPECT_EQ(tokens.at(1).type, TokenType::IDENT);
     EXPECT_EQ(tokens.at(1).lexeme, "Hello");
+    EXPECT_EQ(tokens.at(1).line, 1);
+    EXPECT_EQ(tokens.at(1).column, 8);
     EXPECT_EQ(tokens.at(3).type, TokenType::BEGIN);
     EXPECT_EQ(tokens.at(4).type, TokenType::IDENT);
     EXPECT_EQ(tokens.at(4).lexeme, "WriteLn");
     EXPECT_EQ(tokens.at(5).type, TokenType::LEFT_PAREN);
     EXPECT_EQ(tokens.at(6).type, TokenType::STRING);
     EXPECT_EQ(tokens.at(6).lexeme, "Hello world!");
+    EXPECT_EQ(tokens.at(6).line, 3);
+    EXPECT_EQ(tokens.at(6).column, 24);
+    EXPECT_EQ(tokens.at(11).type, TokenType::STRING);
+    EXPECT_EQ(tokens.at(11).lexeme,
+              "\n"); // 0AX is a char literal in hex notation: 10 (0AX) is the code for "\n"
+    EXPECT_EQ(tokens.at(11).line, 4);
+    EXPECT_EQ(tokens.at(11).column, 17);
     EXPECT_EQ(tokens.at(tokens.size() - 1).type, TokenType::EOM);
 }
 
 TEST(ScannerTests, TestModuleWithNumericLiterals) {
     namespace fs = std::filesystem;
-    const std::string src_file_path{fs::path(__FILE__)
-                                          .parent_path()
-                                          .append("oberon_src")
-                                          .append("NumLiterals.Mod")
-                                          .string()};
-    auto [tokens, errors] = Scanner::scanSrcFile(src_file_path);
+    const std::string srcFilePath{fs::path(__FILE__)
+                                        .parent_path()
+                                        .append("oberon_src")
+                                        .append("NumLiterals.Mod")
+                                        .string()};
+    auto [tokens, errors] = Scanner::scanSrcFile(srcFilePath);
     ASSERT_EQ(tokens.size(), 74);
     // InvalidRealNoIntPart = .2E+4 must be scanned as a dot, followed by an invalid hex int
     // (2E), a plus, and a 4 integer.
     EXPECT_EQ(tokens.at(4).type, TokenType::IDENT);
     EXPECT_EQ(tokens.at(4).lexeme, "InvalidRealNoIntPart");
+    EXPECT_EQ(tokens.at(4).line, 3);
+    EXPECT_EQ(tokens.at(4).column, 15);
     EXPECT_EQ(tokens.at(5).type, TokenType::EQUAL);
+    EXPECT_EQ(tokens.at(5).line, 3);
+    EXPECT_EQ(tokens.at(5).column, 36);
     EXPECT_EQ(tokens.at(6).type, TokenType::DOT);
+    EXPECT_EQ(tokens.at(6).line, 3);
+    EXPECT_EQ(tokens.at(6).column, 38);
     EXPECT_EQ(tokens.at(7).type, TokenType::PLUS);
+    EXPECT_EQ(tokens.at(7).line, 3);
+    EXPECT_EQ(tokens.at(7).column, 41);
     EXPECT_EQ(tokens.at(8).type, TokenType::INTEGER);
     EXPECT_EQ(tokens.at(8).lexeme, "4");
     // ValidRealNoDecimalScale must be scanned as a REAL with the appropriate lexeme.
@@ -228,6 +283,8 @@ TEST(ScannerTests, TestModuleWithNumericLiterals) {
     EXPECT_EQ(tokens.at(16).type, TokenType::EQUAL);
     EXPECT_EQ(tokens.at(17).type, TokenType::REAL);
     EXPECT_EQ(tokens.at(17).lexeme, "23.E+2");
+    EXPECT_EQ(tokens.at(17).line, 5);
+    EXPECT_EQ(tokens.at(17).column, 41);
     EXPECT_EQ(tokens.at(19).type, TokenType::COMMENT);
     // ValidRealNoDecimalNScale must be scanned as a REAL with the appropriate lexeme.
     EXPECT_EQ(tokens.at(21).type, TokenType::IDENT);
@@ -246,6 +303,7 @@ TEST(ScannerTests, TestModuleWithNumericLiterals) {
     EXPECT_EQ(tokens.at(37).type, TokenType::STRING);
     EXPECT_EQ(tokens.at(37).lexeme, "*");
     EXPECT_EQ(tokens.at(37).line, 9);
+    EXPECT_EQ(tokens.at(37).column, 36);
 
     EXPECT_EQ(tokens.at(tokens.size() - 1).type, TokenType::EOM);
 

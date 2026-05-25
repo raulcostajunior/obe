@@ -1,11 +1,11 @@
 
-#ifndef VERSION_HPP
-#define VERSION_HPP
+#ifndef OBE_VERSION_HPP
+#define OBE_VERSION_HPP
 
 #include <sstream>
 #include <string>
 
-namespace obc {
+namespace obe {
 
     constexpr int OBC_VERSION_MAJOR{0};
     constexpr int OBC_VERSION_MINOR{1};
@@ -17,7 +17,7 @@ namespace obc {
         return ostr.str();
     }
 
-} // namespace obc
+} // namespace obe
 
 
 #endif
