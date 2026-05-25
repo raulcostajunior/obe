@@ -102,7 +102,7 @@ namespace obc {
          * @brief Scans a comment - all the characters between a "(*" and a "*)"
          * *
          * @attention this internal method must be called only when the scanner knows that is in
-         * a comment - after a * "(*", but before a "*)".
+         * a comment - after a "(*", but before a "*)".
          *
          * @param ctx the context of the ongoing scan operation.
          */
