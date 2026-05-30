@@ -22,8 +22,6 @@ is used.
 
 #### Oberon+
 
-#### Oberon+
-
 A complete implementation of Oberon-07 with clever and useful extensions can be found at [Oberon](https://github.com/rochus-keller/Oberon). Details about the extended Oberon-07 language, called Oberon+, are available at [Oberon+](https://oberon-lang.github.io/).
 
 #### Oberon (the Uranus' moon, not the language) in the news:
