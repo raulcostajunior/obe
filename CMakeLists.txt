@@ -27,7 +27,7 @@ FetchContent_MakeAvailable(GoogleTest)
 # The compiler library to be linked to the CLI and the unit tests
 add_library(obe_lib STATIC)
 target_sources(obe_lib PUBLIC
-        src/Token.cpp src/Scanner.cpp src/ErrorInfo.cpp src/TokenUtils.cpp
+        src/Token.cpp src/scanner.cpp src/ErrorInfo.cpp src/TokenUtils.cpp
         src/Parser.cpp
         src/Compiler.cpp
         PUBLIC
@@ -37,7 +37,7 @@ target_sources(obe_lib PUBLIC
         ${PROJECT_SOURCE_DIR}/src/Compiler.hpp
         ${PROJECT_SOURCE_DIR}/src/ErrorInfo.hpp
         ${PROJECT_SOURCE_DIR}/src/Parser.hpp
-        ${PROJECT_SOURCE_DIR}/src/Scanner.hpp
+        ${PROJECT_SOURCE_DIR}/src/scanner.hpp
         ${PROJECT_SOURCE_DIR}/src/Token.hpp
         ${PROJECT_SOURCE_DIR}/src/TokenUtils.hpp
         ${PROJECT_SOURCE_DIR}/src/Version.hpp)
