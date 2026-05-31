@@ -2,13 +2,14 @@
 
 #include <filesystem>
 
-#include "Scanner.hpp"
+#include "scanner.hpp"
 
 using namespace obe;
+using namespace scanner;
 
 TEST(ScannerTests, TestEmptyFile) {
     // An empty file must have the EOM token and no errors.
-    const auto [tokens, errors] = Scanner::scan("");
+    const auto [tokens, errors] = scan("");
     EXPECT_EQ(tokens.size(), 1);
     EXPECT_EQ(tokens.at(tokens.size() - 1).type, TokenType::EOM);
     EXPECT_EQ(errors.size(), 0);
@@ -56,7 +57,7 @@ END LowerCaseModule.
 
     // A lexically valid file with lowerCase keywords should be successfully parsed with all
     // the keywords identified with the scanner in lowerCaseKeywords mode.
-    auto res = Scanner::scan(lowerCaseSrc, true);
+    auto res = scan(lowerCaseSrc, true);
     ASSERT_EQ(res.errors.size(), 0);
     ASSERT_EQ(res.tokens.size(), expectTokens);
     EXPECT_EQ(res.tokens.at(0).type, TokenType::MODULE);
@@ -87,7 +88,7 @@ END LowerCaseModule.
     // A lexically valid file with lowerCaseKeywords should be successfully parsed with none
     // of the keywords identified when the scanner is in the default uppercase-keywords mode.
     // All keywords should be identified as token identifiers.
-    res = Scanner::scan(lowerCaseSrc);
+    res = scan(lowerCaseSrc);
     ASSERT_EQ(res.errors.size(), 0);
     ASSERT_EQ(res.tokens.size(), expectTokens);
     EXPECT_EQ(res.tokens.at(0).type, TokenType::IDENT);
@@ -113,7 +114,7 @@ END LowerCaseModule.
 
     // A lexically valid file with uppercase keywords should be successfully parsed with all
     // the keywords identified with the scanner in the default uppercase-keywords mode.
-    res = Scanner::scan(upperCaseSrc);
+    res = scan(upperCaseSrc);
     ASSERT_EQ(res.errors.size(), 0);
     ASSERT_EQ(res.tokens.size(), expectTokens);
     EXPECT_EQ(res.tokens.at(0).type, TokenType::MODULE);
@@ -131,7 +132,7 @@ END LowerCaseModule.
     // A lexically valid file with uppercase keywords should be successfully parsed with none
     // of the keywords identified when the scanner is in lowercase-keywords mode.
     // All keywords should be identified as token identifiers.
-    res = Scanner::scan(upperCaseSrc, true);
+    res = scan(upperCaseSrc, true);
     ASSERT_EQ(res.errors.size(), 0);
     ASSERT_EQ(res.tokens.size(), expectTokens);
     EXPECT_EQ(res.tokens.at(0).type, TokenType::IDENT);
@@ -156,7 +157,7 @@ MODULE UnfinishedComment;
 (* This is a multiline, open ended
 comment and should be rejected.
 )"};
-    auto [tokens, errors] = Scanner::scan(moduleSrc);
+    auto [tokens, errors] = scan(moduleSrc);
     ASSERT_EQ(tokens.size(), 4);
     EXPECT_EQ(tokens.at(0).type, TokenType::MODULE);
     EXPECT_EQ(tokens.at(1).type, TokenType::IDENT);
@@ -189,7 +190,7 @@ BEGIN
     // convert tabs to spaces on save. Use explicit "\t" instead.
     const std::string invalidSymbolSrc{invalidSymbolSrcPrefix +
                                        "\tVAR i: INTEGER?;\n\tWriteInt(i)\nEND.\n"};
-    auto [tokens, errors] = Scanner::scan(invalidSymbolSrc, false, 4);
+    auto [tokens, errors] = scan(invalidSymbolSrc, false, 4);
     ASSERT_EQ(tokens.size(), 17);
     EXPECT_EQ(tokens.at(0).type, TokenType::MODULE);
     EXPECT_EQ(tokens.at(1).type, TokenType::IDENT);
@@ -213,7 +214,7 @@ BEGIN
     EXPECT_EQ(errors.at(0).column, 19);
     EXPECT_EQ(errors.at(0).msg, std::string{"Unexpected character, '?' found."});
 
-    auto [tokensUnkSpaces, errorsUnkSpaces] = Scanner::scan(invalidSymbolSrc);
+    auto [tokensUnkSpaces, errorsUnkSpaces] = scan(invalidSymbolSrc);
     ASSERT_EQ(tokensUnkSpaces.size(), 17);
     ASSERT_EQ(errorsUnkSpaces.size(), 1);
     EXPECT_EQ(errorsUnkSpaces.at(0).line, 8);
@@ -226,7 +227,7 @@ TEST(ScannerTests, TestModuleWithStringLiteral) {
     namespace fs = std::filesystem;
     const std::string srcFilePath{
           fs::path(__FILE__).parent_path().append("oberon_src").append("Hello.Mod").string()};
-    auto [tokens, errors] = Scanner::scanSrcFile(srcFilePath);
+    auto [tokens, errors] = scanSrcFile(srcFilePath);
     ASSERT_EQ(tokens.size(), 18);
     EXPECT_EQ(tokens.at(0).type, TokenType::MODULE);
     EXPECT_EQ(tokens.at(0).line, 1);
@@ -258,7 +259,7 @@ TEST(ScannerTests, TestModuleWithNumericLiterals) {
                                         .append("oberon_src")
                                         .append("NumLiterals.Mod")
                                         .string()};
-    auto [tokens, errors] = Scanner::scanSrcFile(srcFilePath);
+    auto [tokens, errors] = scanSrcFile(srcFilePath);
     ASSERT_EQ(tokens.size(), 74);
     // InvalidRealNoIntPart = .2E+4 must be scanned as a dot, followed by an invalid hex int
     // (2E), a plus, and a 4 integer.

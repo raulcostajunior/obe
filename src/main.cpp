@@ -11,8 +11,8 @@
 // https://clangd.llvm.org/guides/include-cleaner#unused-include-warning
 #include "CLI/CLI.hpp" // IWYU pragma: keep
 #include "Parser.hpp"
-#include "Scanner.hpp"
 #include "Version.hpp"
+#include "scanner.hpp"
 
 // NOLINTBEGIN(bugprone-exception-escape)
 int main(int argc, char **argv) {
@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
     }
 
     // For now, we just scan and printout the results.
-    auto res = obe::Scanner::scanSrcFile(srcFile, lowerCaseKeywords);
+    auto res = obe::scanner::scanSrcFile(srcFile, lowerCaseKeywords);
     // Report on tokens.
     if (res.tokens.empty()) {
         std::cout << "No token found in '" << srcFile << "'.\n";
