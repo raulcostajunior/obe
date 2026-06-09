@@ -1,6 +1,7 @@
 #ifndef OBE_SCANNER_HPP
 #define OBE_SCANNER_HPP
 
+// ReSharper disable once CppUnusedIncludeDirective
 #include <cstdint>
 #include <string>
 #include <vector>
