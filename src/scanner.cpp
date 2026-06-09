@@ -1,6 +1,7 @@
 #include "scanner.hpp"
 
 #include <array>
+// ReSharper disable once CppUnusedIncludeDirective
 #include <cstring>
 #include <fstream>
 #include <string_view>
