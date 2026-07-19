@@ -42,31 +42,31 @@ int main(int argc, char **argv) {
     }
 
     // For now, we just scan and printout the results.
-    auto res = obe::scanner::scanSrcFile(srcFile, lowerCaseKeywords);
+    auto [tokens, errors] = obe::scanner::scanSrcFile(srcFile, lowerCaseKeywords);
     // Report on tokens.
-    if (res.tokens.empty()) {
+    if (tokens.empty()) {
         std::cout << "No token found in '" << srcFile << "'.\n";
     } else {
-        std::cout << "Scanned " << res.tokens.size()
-                  << (res.tokens.size() == 1U ? " token" : " tokens") << " from " << srcFile
+        std::cout << "Scanned " << tokens.size()
+                  << (tokens.size() == 1U ? " token" : " tokens") << " from " << srcFile
                   << ":\n";
-        for (const auto &token : res.tokens) {
+        for (const auto &token : tokens) {
             std::cout << token << "\n";
         }
     }
     // Report on errors.
-    if (!res.errors.empty()) {
-        if (res.errors.size() == 1) {
+    if (!errors.empty()) {
+        if (errors.size() == 1) {
             std::cout << "An error happened while scanning '" << srcFile << "':\n";
         } else {
-            std::cout << res.errors.size() << " errors happened while scanning '" << srcFile
+            std::cout << errors.size() << " errors happened while scanning '" << srcFile
                       << "':\n";
         }
-        for (const auto &error : res.errors) {
+        for (const auto &error : errors) {
             std::cout << error << "\n";
         }
     }
 
-    obe::Parser parser{std::move(res.tokens)};
+    obe::Parser parser{std::move(tokens)};
 }
 // NOLINTEND(bugprone-exception-escape)
