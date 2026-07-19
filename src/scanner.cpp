@@ -16,8 +16,8 @@ namespace obe::scanner {
     /**
      * Context of an ongoing scan operation. Each scan operation creates an
      * instance of ScanContext at its start. The context stores bookkeeping data for the
-     * scan process and is passed around (and modified) by the different methods of the
-     * Scanner class.
+     * current scan operation. It is created at the start of the scan operation and
+     * passed around (and modified) by the different functions involved.
      */
     struct ScanContext {
         // The source input being scanned.
