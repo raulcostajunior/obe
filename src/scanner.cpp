@@ -13,52 +13,54 @@ namespace obe::scanner {
     // Size of the buffer for storing an errno corresponding message.
     constexpr size_t ERR_MSG_BUFF_SIZE = 256U;
 
-    /**
-     * Context of an ongoing scan operation. Each scan operation creates an
-     * instance of ScanContext at its start. The context stores bookkeeping data for the
-     * scan process and is passed around (and modified) by the different methods of the
-     * Scanner class.
-     */
-    struct ScanContext {
-        // The source input being scanned.
-        // A string_view here is safe - the lifetime of a ScanContext is limited to
-        // a single scan operation. The string_view allows avoiding both copying strings and
-        // having to declare a const data member.
-        std::string_view srcInput;
-        // Use lowercase keyword?
-        bool lowerCaseKeywords;
-        // Number of spaces per tab - zero means it is not known and lines with tabs cannot
-        // have the currColumn information updated after the first line tab is found.
-        uint8_t spacesPerTab;
-        // Should currColumn be ignored? (currColumn parameter description below for more
-        // details)
-        bool ignoreCurrColumn{false};
-        // Index, in the src input, of the character being scanned.
-        unsigned long lexPos{0};
-        // Number of the line from the src input currently being scanned.
-        int currLine{1};
-        // Number of the column (of the current line) from the src input currently
-        // being scanned. Column information should be ignored if at least one '\t' has been
-        // found in the current line and the number of spaces per tab is not set.
-        int currColumn{1};
-        // Starting column of the current token being scanned - initialized to a sentinel value
-        int currTokenColumn{-1};
-        // The tokens (and errors) found by the ongoing scan operation.
-        ScanResults results;
-
-        ScanContext(const std::string& srcInput, const bool lowerKey,
-                    const uint8_t spacesPerTab)
-            : srcInput{srcInput}, lowerCaseKeywords{lowerKey}, spacesPerTab{spacesPerTab} {}
-
-        int getCurrColumn() const {
-            if (ignoreCurrColumn) {
-                return -1;
-            }
-            return currColumn;
-        }
-    };
-
     namespace {
+        
+        /**
+         * Context of an ongoing scan operation. Each scan operation creates an
+         * instance of ScanContext at its start. The context stores bookkeeping data for the
+         * scan process and is passed around (and modified) by the different methods of the
+         * Scanner class.
+         */
+        struct ScanContext {
+            // The source input being scanned.
+            // A string_view here is safe - the lifetime of a ScanContext is limited to
+            // a single scan operation. The string_view allows avoiding both copying strings and
+            // having to declare a const data member.
+            std::string_view srcInput;
+            // Use lowercase keyword?
+            bool lowerCaseKeywords;
+            // Number of spaces per tab - zero means it is not known and lines with tabs cannot
+            // have the currColumn information updated after the first line tab is found.
+            uint8_t spacesPerTab;
+            // Should currColumn be ignored? (currColumn parameter description below for more
+            // details)
+            bool ignoreCurrColumn{false};
+            // Index, in the src input, of the character being scanned.
+            unsigned long lexPos{0};
+            // Number of the line from the src input currently being scanned.
+            int currLine{1};
+            // Number of the column (of the current line) from the src input currently
+            // being scanned. Column information should be ignored if at least one '\t' has been
+            // found in the current line and the number of spaces per tab is not set.
+            int currColumn{1};
+            // Starting column of the current token being scanned - initialized to a sentinel
+            // value
+            int currTokenColumn{-1};
+            // The tokens (and errors) found by the ongoing scan operation.
+            ScanResults results;
+
+            ScanContext(const std::string& srcInput, const bool lowerKey,
+                        const uint8_t spacesPerTab)
+                : srcInput{srcInput}, lowerCaseKeywords{lowerKey}, spacesPerTab{spacesPerTab} {}
+
+            int getCurrColumn() const {
+                if (ignoreCurrColumn) {
+                    return -1;
+                }
+                return currColumn;
+            }
+        };
+
         /**
          * @brief Returns whether the whole src input has been already scanned or not.
          *
