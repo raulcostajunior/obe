@@ -14,7 +14,7 @@ namespace obe::scanner {
     constexpr size_t ERR_MSG_BUFF_SIZE = 256U;
 
     namespace {
-        
+
         /**
          * Context of an ongoing scan operation. Each scan operation creates an
          * instance of ScanContext at its start. The context stores bookkeeping data for the
