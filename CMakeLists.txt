@@ -18,8 +18,8 @@ FetchContent_Declare(CLI11
         GIT_TAG d9473a486b1ffb9a2949a937f3895c7c055afa59)
 FetchContent_Declare(GoogleTest
         GIT_REPOSITORY https://github.com/google/googletest
-        GIT_TAG v1.15.2
-        FIND_PACKAGE_ARGS 1.15.2...1.16.0 NAMES GTest)
+        GIT_TAG v1.17.0
+        FIND_PACKAGE_ARGS 1.17.0...1.18.0 NAMES GTest)
 
 FetchContent_MakeAvailable(CLI11)
 FetchContent_MakeAvailable(GoogleTest)
